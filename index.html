@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ma Séance</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--tx:#14161a;--mu:#6b7280;--ac:#e8590c;--ok:#16a34a;--bd:#e3e5e9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1013;--card:#181b20;--tx:#f1f2f4;--mu:#9097a3;--bd:#262a31}}
+:root[data-theme="dark"]{--bg:#0e1013;--card:#181b20;--tx:#f1f2f4;--mu:#9097a3;--bd:#262a31}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+header{padding:16px 16px 8px}
+h1{font-size:22px;margin:0 0 10px}
+.est{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.est b{font-size:26px;color:var(--ac)}
+.est small{color:var(--mu);display:block;font-size:12px;margin-top:2px}
+.btn{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 12px;font-size:14px}
+.btn.p{background:var(--ac);color:#fff;border:0}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:8px 16px}
+.tab{flex:none;padding:8px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:14px}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.list{padding:4px 16px;display:grid;gap:10px}
+.ex{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px}
+.ex.in{border-color:var(--ac)}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.nm{font-weight:600;font-size:16px}
+.nt{color:var(--mu);font-size:13px;margin-top:2px}
+.dots{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.dot{width:44px;height:44px;border-radius:50%;border:2px solid var(--bd);background:transparent;color:var(--mu);font-size:16px;font-weight:600}
+.dot.d{background:var(--ok);border-color:var(--ok);color:#fff}
+.dot.n{border-color:var(--ac);color:var(--ac)}
+.sm{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:18px}
+.sh{margin:14px 16px 4px;font-size:13px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
+.in{flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+.chrono{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:14px}
+.time{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums;min-width:140px}
+.go{flex:1;height:64px;border-radius:16px;border:0;font-size:20px;font-weight:700;color:#fff;background:var(--ok)}
+.go.run{background:#dc2626}
+.last{font-size:12px;color:var(--mu)}
+</style></head><body>
+<header>
+<h1>💪 Ma Séance</h1>
+<div class="est"><div><b id="eta">--:--</b><small id="etaTxt"></small></div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn" id="rst">Nouvelle séance</button><button class="btn" id="pc">⚙️ Rythme</button></div></div>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="list" id="list"></div>
+<div class="chrono">
+<div><div class="time" id="ct">0:00</div><div class="last" id="cl">Repos : appuie pour lancer</div></div>
+<button class="go" id="cb">▶ Lancer</button>
+</div>
+<script>
+const DATA={
+"Pecs":[["Développé couché barre","Le classique, base de la force"],["Développé incliné haltères","Haut des pecs"],["Dips pectoraux","Penché en avant"],["Écarté poulie vis-à-vis","Étirement + contraction"],["Pompes lestées","Finisher"]],
+"Épaules":[["Développé militaire haltères","Force globale des épaules"],["Élévations latérales","Largeur d'épaules"],["Oiseau","Arrière d'épaule"],["Arnold press","Mobilité + volume"],["Face pull","Santé des épaules"]],
+"Triceps":[["Barre au front","Masse du triceps"],["Extension poulie corde","Isolation"],["Dips banc","Poids du corps"],["Extension nuque haltère","Chef long"]],
+"Dos":[["Tractions","Le roi du dos"],["Rowing barre","Épaisseur"],["Tirage vertical","Largeur"],["Rowing haltère unilatéral","Amplitude"],["Tirage horizontal poulie","Contrôle"]],
+"Biceps":[["Curl barre EZ","Masse"],["Curl marteau","Brachial + avant-bras"],["Curl incliné haltères","Gros étirement"],["Curl pupitre","Isolation stricte"]],
+"Abdos":[["Gainage","3 x 45 s"],["Relevé de jambes suspendu","Bas des abdos"],["Crunch poulie","Avec charge"],["Roue abdominale","Avancé"]],
+"Autre":[]
+};
+const KEY="muscu_v2";
+let S={sel:{},start:null,last:null,tab:"Pecs",custom:{},sessions:[]};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const id=n=>"x"+[...n].map(c=>c.charCodeAt(0).toString(36)).join("");
+const ES=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+function render(){
+$("tabs").innerHTML=Object.keys(DATA).concat(["__ses"]).map(k=>`<button class="tab ${k==S.tab?"on":""}" data-t="${k}">${k=="__ses"?"📁 Mes séances":k}</button>`).join("");
+let h="";
+const inSes=Object.keys(S.sel);
+if(inSes.length)h+=`<div class="sh">Dans ma séance (${inSes.length})</div>`+inSes.map(k=>card(S.sel[k].n,S.sel[k].note,true,false)).join("")+`<div style="padding:10px 0"><button class="btn p" id="sv">💾 Enregistrer comme séance</button></div>`;
+if(S.tab=="__ses"){
+h+=`<div class="sh">Mes séances enregistrées</div>`;
+if(!S.sessions.length)h+=`<div class="nt">Aucune pour l'instant. Ajoute des exos dans une zone, puis touche « Enregistrer comme séance ».</div>`;
+h+=S.sessions.map((x,i)=>`<div class="ex"><div class="nm">${ES(x.name)}</div><div class="nt">${x.items.length} exos : ${x.items.map(y=>ES(y.n)).join(", ")}</div><div class="dots"><button class="btn p" data-load="${i}">Charger</button><button class="btn" data-delses="${i}">Supprimer</button></div></div>`).join("");
+}else{
+const cus=(S.custom[S.tab]||[]).map(n=>[n,"Perso",1]);
+h+=`<div class="sh">${S.tab}</div>`+DATA[S.tab].concat(cus).filter(e=>!S.sel[id(e[0])]).map(e=>card(e[0],e[1],false,!!e[2])).join("");
+h+=`<div class="ex"><div class="nm">Créer mon exo (${S.tab})</div><div class="dots"><input class="in" id="ni" placeholder="Nom de l'exercice"><button class="btn p" id="nb">Créer</button></div></div>`;
+}
+$("list").innerHTML=h;eta();
+}
+function card(n,note,on,cu){
+const k=id(n),s=S.sel[k];
+let d="";
+if(on){d=`<div class="dots">`;for(let i=0;i<s.sets;i++)d+=`<button class="dot ${i<s.done?"d":i==s.done?"n":""}" data-k="${k}" data-i="${i}">${i<s.done?"✓":i+1}</button>`;
+d+=`<button class="sm" data-k="${k}" data-a="-">−</button><button class="sm" data-k="${k}" data-a="+">+</button></div>`;}
+return `<div class="ex ${on?"in":""}"><div class="top"><div><div class="nm">${ES(n)}</div><div class="nt">${ES(note)}</div></div><div style="display:flex;gap:6px"><button class="btn ${on?"":"p"}" data-k="${k}" data-n="${ES(n)}" data-note="${ES(note)}" data-add="${on?0:1}">${on?"Retirer":"+ Ajouter"}</button>${cu&&!on?`<button class="sm" data-delex="${ES(n)}">🗑</button>`:""}</div></div>${d}</div>`;
+}
+document.addEventListener("click",e=>{
+const t=e.target.closest("button");if(!t)return;
+if(t.dataset.t){S.tab=t.dataset.t}
+else if(t.id=="sv"){const nm=prompt("Nom de la séance ?");if(!nm)return;S.sessions.push({name:nm,items:Object.values(S.sel).map(x=>({n:x.n,note:x.note,sets:x.sets}))});S.tab="__ses"}
+else if(t.id=="nb"){const v=$("ni").value.trim();if(!v)return;(S.custom[S.tab]=S.custom[S.tab]||[]).push(v)}
+else if(t.dataset.delex){S.custom[S.tab]=(S.custom[S.tab]||[]).filter(x=>x!=t.dataset.delex)}
+else if(t.dataset.load!==undefined){const ss=S.sessions[+t.dataset.load];S.sel={};ss.items.forEach(x=>S.sel[id(x.n)]={n:x.n,note:x.note,sets:x.sets,done:0});S.start=null;S.last=null}
+else if(t.dataset.delses!==undefined){if(!confirm("Supprimer cette séance ?"))return;S.sessions.splice(+t.dataset.delses,1)}
+else if(t.dataset.add!==undefined){const k=t.dataset.k;if(t.dataset.add==="1")S.sel[k]={n:t.dataset.n,note:t.dataset.note,sets:4,done:0};else delete S.sel[k];}
+else if(t.dataset.i!==undefined){const s=S.sel[t.dataset.k],i=+t.dataset.i;
+if(i<s.done){s.done=i}else{s.done=i+1;if(!S.start)S.start=Date.now();S.last=Date.now();}
+}
+else if(t.dataset.a){const s=S.sel[t.dataset.k];s.sets=Math.max(1,Math.min(10,s.sets+(t.dataset.a=="+"?1:-1)));s.done=Math.min(s.done,s.sets);}
+else return;
+save();render();
+});
+$("rst").onclick=()=>{
+if(!S.start&&Object.keys(S.sel).length){S.start=Date.now();S.last=null;save();render();return}
+if(confirm("Remettre toutes les séries à zéro ?")){Object.values(S.sel).forEach(s=>s.done=0);S.start=null;S.last=null;save();render();}};
+$("pc").onclick=()=>{const v=prompt("Temps moyen par série, repos compris (en secondes) :",S.pace||150);const n=parseInt(v);if(n>=30&&n<=600){S.pace=n;save();eta()}};
+function fmt(d){return d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}
+function dur(sec){const m=Math.round(sec/60);return m>=60?Math.floor(m/60)+"h"+String(m%60).padStart(2,"0"):m+" min"}
+function eta(){
+let tot=0,done=0,ne=0;Object.values(S.sel).forEach(s=>{tot+=s.sets;done+=s.done;ne++});
+$("rst").textContent=(!S.start&&tot)?"▶ Démarrer":"Nouvelle séance";
+if(!tot){$("eta").textContent="--:--";$("etaTxt").textContent="Ajoute des exos pour estimer ta fin de séance";return}
+const rem=tot-done;
+if(!rem){$("eta").textContent="Terminé 🎉";$("etaTxt").textContent=done+" séries faites";return}
+const dp=S.pace||150;let pace=dp;
+if(done>0&&S.start&&S.last){const m=(S.last-S.start)/1000/done;const w=Math.min(done/4,1);pace=Math.max(45,Math.min(400,m*w+dp*(1-w)))}
+const end=new Date(Date.now()+rem*pace*1000);
+$("eta").textContent="~ "+fmt(end);
+$("etaTxt").textContent=tot+" séries prévues ("+ne+" exos) · "+rem+" restantes · ~"+Math.round(pace)+" s/série · durée totale ~"+dur(tot*pace)+(S.start?"":" · appuie sur Démarrer");
+}
+let run=false,t0=0,iv;
+function show(ms){const s=Math.floor(ms/1000);$("ct").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+$("cb").onclick=()=>{
+if(!run){run=true;t0=Date.now();$("cb").textContent="⏸ Stop";$("cb").className="go run";$("cl").textContent="En cours…";iv=setInterval(()=>show(Date.now()-t0),200)}
+else{run=false;clearInterval(iv);const el=Date.now()-t0;show(0);$("cb").textContent="▶ Lancer";$("cb").className="go";
+const s=Math.floor(el/1000);$("cl").textContent="Dernier : "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}}
+};
+render();setInterval(eta,30000);
+</script></body></html>
