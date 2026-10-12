@@ -32,6 +32,7 @@ h1{font-size:22px;margin:0 0 10px}
 .sm{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:18px}
 .sh{margin:14px 16px 4px;font-size:13px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
 .in{flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pg label{font-size:13px;color:var(--mu);display:flex;flex-direction:column;gap:4px}
 .chrono{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:14px}
 .time{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums;min-width:140px}
 .go{flex:1;height:64px;border-radius:16px;border:0;font-size:20px;font-weight:700;color:#fff;background:var(--ok)}
@@ -59,14 +60,14 @@ const DATA={
 "Autre":[]
 };
 const KEY="muscu_v2";
-let S={sel:{},start:null,last:null,tab:"Pecs",custom:{},sessions:[]};
+let S={sel:{},start:null,last:null,tab:"Pecs",custom:{},sessions:[],prof:{a:20,s:"m",n:4}};
 try{S=Object.assign(S,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const $=id=>document.getElementById(id);
 const id=n=>"x"+[...n].map(c=>c.charCodeAt(0).toString(36)).join("");
 const ES=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
 function render(){
-$("tabs").innerHTML=Object.keys(DATA).concat(["__ses"]).map(k=>`<button class="tab ${k==S.tab?"on":""}" data-t="${k}">${k=="__ses"?"📁 Mes séances":k}</button>`).join("");
+$("tabs").innerHTML=Object.keys(DATA).concat(["__ses","__prof"]).map(k=>`<button class="tab ${k==S.tab?"on":""}" data-t="${k}">${k=="__ses"?"📁 Mes séances":k=="__prof"?"👤 Profil":k}</button>`).join("");
 let h="";
 const inSes=Object.keys(S.sel);
 if(inSes.length)h+=`<div class="sh">Dans ma séance (${inSes.length})</div>`+inSes.map(k=>card(S.sel[k].n,S.sel[k].note,true,false)).join("")+`<div style="padding:10px 0"><button class="btn p" id="sv">💾 Enregistrer comme séance</button></div>`;
@@ -74,12 +75,21 @@ if(S.tab=="__ses"){
 h+=`<div class="sh">Mes séances enregistrées</div>`;
 if(!S.sessions.length)h+=`<div class="nt">Aucune pour l'instant. Ajoute des exos dans une zone, puis touche « Enregistrer comme séance ».</div>`;
 h+=S.sessions.map((x,i)=>`<div class="ex"><div class="nm">${ES(x.name)}</div><div class="nt">${x.items.length} exos : ${x.items.map(y=>ES(y.n)).join(", ")}</div><div class="dots"><button class="btn p" data-load="${i}">Charger</button><button class="btn" data-delses="${i}">Supprimer</button></div></div>`).join("");
+}else if(S.tab=="__prof"){
+const P=S.prof;
+h+=`<div class="sh">Mon profil</div><div class="ex"><div class="pg">
+<label>Poids (kg)<input class="in" type="number" inputmode="decimal" data-p="w" value="${P.w||""}"></label>
+<label>Taille (cm)<input class="in" type="number" inputmode="decimal" data-p="h" value="${P.h||""}"></label>
+<label>Âge<input class="in" type="number" inputmode="numeric" data-p="a" value="${P.a||""}"></label>
+<label>Sexe<select class="in" data-p="s"><option value="m" ${P.s=="f"?"":"selected"}>Homme</option><option value="f" ${P.s=="f"?"selected":""}>Femme</option></select></label>
+<label>Séances muscu / semaine<input class="in" type="number" inputmode="numeric" data-p="n" value="${P.n||""}"></label>
+</div></div><div class="sh">Résultats (estimations)</div><div class="ex" id="pr"></div>`;
 }else{
 const cus=(S.custom[S.tab]||[]).map(n=>[n,"Perso",1]);
 h+=`<div class="sh">${S.tab}</div>`+DATA[S.tab].concat(cus).filter(e=>!S.sel[id(e[0])]).map(e=>card(e[0],e[1],false,!!e[2])).join("");
 h+=`<div class="ex"><div class="nm">Créer mon exo (${S.tab})</div><div class="dots"><input class="in" id="ni" placeholder="Nom de l'exercice"><button class="btn p" id="nb">Créer</button></div></div>`;
 }
-$("list").innerHTML=h;eta();
+$("list").innerHTML=h;eta();profRes();
 }
 function card(n,note,on,cu){
 const k=id(n),s=S.sel[k];
@@ -109,6 +119,27 @@ if(!S.start&&Object.keys(S.sel).length){S.start=Date.now();S.last=null;save();re
 if(confirm("Remettre toutes les séries à zéro ?")){Object.values(S.sel).forEach(s=>s.done=0);S.start=null;S.last=null;save();render();}};
 $("pc").onclick=()=>{const v=prompt("Temps moyen par série, repos compris (en secondes) :",S.pace||150);const n=parseInt(v);if(n>=30&&n<=600){S.pace=n;save();eta()}};
 function fmt(d){return d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}
+const r10=x=>Math.round(x/10)*10;
+function burn(sec){const w=+S.prof.w;return w?r10(5*w*sec/3600):0}
+function profRes(){
+const el=$("pr");if(!el)return;
+const P=S.prof,w=+P.w,h=+P.h,a=+P.a||20,n=+P.n||4;
+if(!w||!h){el.innerHTML='<div class="nt">Renseigne ton poids et ta taille pour voir les résultats.</div>';return}
+const bmr=10*w+6.25*h-5*a+(P.s=="f"?-161:5);
+const tdee=bmr*Math.min(1.4+0.05*n,1.75);
+const goal=tdee*1.10,lo=tdee*1.05,hi=tdee*1.15;
+const prot=Math.round(1.8*w),fat=Math.round(w),carb=Math.round((goal-prot*4-fat*9)/4);
+let tot=0;Object.values(S.sel).forEach(x=>tot+=x.sets);
+const d=tot?tot*(S.pace||150):3600;
+el.innerHTML=`<div class="nm">🍽️ Prise de masse légère</div>
+<div class="nt" style="margin:6px 0 10px">Objectif : <b style="color:var(--ac);font-size:20px">~${r10(goal)} kcal/jour</b> (fourchette ${r10(lo)}–${r10(hi)})</div>
+<div class="nt">Maintien estimé : ~${r10(tdee)} kcal · Métabolisme de base : ~${r10(bmr)} kcal</div>
+<div class="nt" style="margin-top:6px">Repères : ~${prot} g de protéines · ~${fat} g de lipides · ~${carb} g de glucides</div>
+<div class="nm" style="margin-top:14px">🔥 Dépense en séance</div>
+<div class="nt" style="margin-top:6px">${tot?"Ta séance actuelle ("+dur(d)+") : ~"+burn(d)+" kcal":"Une séance de 60 min : ~"+burn(3600)+" kcal"}</div>
+<div class="nt" style="margin-top:12px">Ce sont des estimations (formule de Mifflin-St Jeor, dépense en séance à 5 MET, foot inclus dans le niveau d'activité). Pèse-toi chaque semaine : idéalement +0,25 à 0,5 kg/semaine. Si tu prends plus, baisse un peu ; si tu ne prends rien pendant 2-3 semaines, ajoute ~100-200 kcal.</div>`;
+}
+document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset.p;if(!k)return;S.prof[k]=e.target.value;save();profRes();eta()});
 function dur(sec){const m=Math.round(sec/60);return m>=60?Math.floor(m/60)+"h"+String(m%60).padStart(2,"0"):m+" min"}
 function eta(){
 let tot=0,done=0,ne=0;Object.values(S.sel).forEach(s=>{tot+=s.sets;done+=s.done;ne++});
@@ -120,7 +151,7 @@ const dp=S.pace||150;let pace=dp;
 if(done>0&&S.start&&S.last){const m=(S.last-S.start)/1000/done;const w=Math.min(done/4,1);pace=Math.max(45,Math.min(400,m*w+dp*(1-w)))}
 const end=new Date(Date.now()+rem*pace*1000);
 $("eta").textContent="~ "+fmt(end);
-$("etaTxt").textContent=tot+" séries prévues ("+ne+" exos) · "+rem+" restantes · ~"+Math.round(pace)+" s/série · durée totale ~"+dur(tot*pace)+(S.start?"":" · appuie sur Démarrer");
+$("etaTxt").textContent=tot+" séries prévues ("+ne+" exos) · "+rem+" restantes · ~"+Math.round(pace)+" s/série · durée totale ~"+dur(tot*pace)+(+S.prof.w?" · ~"+burn(tot*pace)+" kcal":"")+(S.start?"":" · appuie sur Démarrer");
 }
 let run=false,t0=0,iv;
 function show(ms){const s=Math.floor(ms/1000);$("ct").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
