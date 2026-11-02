@@ -81,7 +81,7 @@ const DATA={
 "Cardio":[],
 "Autre":[["Shrugs","Trapèzes"]]
 };
-const GROUPS=[["Pecs","Triceps","Épaules"],["Dos","Biceps"],["Jambes"],["Abdos","Cardio","Autre"]];
+const GROUPS=[["Push",["Pecs","Triceps","Épaules","Autre"]],["Pull",["Dos","Biceps"]],["Legs",["Jambes"]],["Cardio",["Abdos","Cardio"]]];
 const FOODS=[
 ["Blanc de poulet","Viande",31,165,150],
 ["Cuisse de poulet","Viande",26,210,150],
@@ -239,7 +239,7 @@ return`<div class="sh">Dans ma séance (${k.length})</div>`+k.map(x=>card(S.sel[
 function exView(){
 let h=sesBlock();
 if(!S.cat){
-return h+GROUPS.map(g=>`<div class="grp">`+g.map(c=>`<button class="cat" data-cat="${c}"><div>${c}<small>${c=="Cardio"?S.hist.filter(x=>x.type=="cardio").length+" sortie(s) enregistrée(s)":catCount(c)+" exercice(s)"}</small></div><span class="chv">›</span></button>`).join("")+`</div>`).join("")}
+return h+GROUPS.map(g=>`<div class="sh">${g[0]}</div><div class="grp">`+g[1].map(c=>`<button class="cat" data-cat="${c}"><div>${c}<small>${c=="Cardio"?S.hist.filter(x=>x.type=="cardio").length+" sortie(s) enregistrée(s)":catCount(c)+" exercice(s)"}</small></div><span class="chv">›</span></button>`).join("")+`</div>`).join("")}
 h+=`<div><button class="btn" data-cat="">‹ Catégories</button></div><div class="sh">${S.cat}</div>`;
 if(S.cat=="Cardio")return h+cardioView();
 const cus=(S.custom[S.cat]||[]).map(n=>[n,"Perso",1]);
@@ -254,7 +254,7 @@ return`<div class="ex ${on?"in":""}"><div class="top"><div><div class="nm">${ES(
 /* CARDIO */
 const pace=(km,sec)=>{const p=sec/km;return Math.floor(p/60)+"'"+String(Math.round(p%60)).padStart(2,"0")+'"/km'};
 function musView(){const H=S.hist.filter(x=>x.type!="cardio"&&x.g),mon=monday(Date.now()).getTime(),n=Date.now();
-const G=Object.keys(DATA).filter(c=>c!="Autre");
+const G=Object.keys(DATA).filter(c=>!["Autre","Abdos","Cardio"].includes(c));
 let h=`<div class="sh">Récupération</div><div class="nt">Vert : prêt à retravailler (3 jours ou plus). Orange : encore un peu chargé. Rouge : travaillé il y a moins de 2 jours.</div>`;
 h+=G.map(c=>{const L=H.filter(x=>x.g[c]);if(!L.length)return`<div class="food"><div class="fr"><div class="nm">${c}</div><div class="nt">Pas encore de données</div></div></div>`;
 const d=Math.floor((n-Math.max(...L.map(x=>x.e)))/864e5),col=d>=3?"#16a34a":d>=2?"#f59e0b":"#dc2626";
