@@ -239,8 +239,11 @@ return`<div class="sh">Dans ma séance (${k.length})</div>`+k.map(x=>card(S.sel[
 function exView(){
 let h=sesBlock();
 if(!S.cat){
-return h+GROUPS.map(g=>`<div class="sh">${g[0]}</div><div class="grp">`+g[1].map(c=>`<button class="cat" data-cat="${c}"><div>${c}<small>${c=="Cardio"?S.hist.filter(x=>x.type=="cardio").length+" sortie(s) enregistrée(s)":catCount(c)+" exercice(s)"}</small></div><span class="chv">›</span></button>`).join("")+`</div>`).join("")}
-h+=`<div><button class="btn" data-cat="">‹ Catégories</button></div><div class="sh">${S.cat}</div>`;
+const sub=c=>c=="Cardio"?S.hist.filter(x=>x.type=="cardio").length+" sortie(s) enregistrée(s)":catCount(c)+" exercice(s)";
+const G0=GROUPS.find(g=>g[0]==S.grp);
+if(!G0)return h+`<div class="grp">`+GROUPS.map(g=>`<button class="cat" data-grp="${g[0]}"><div>${g[0]}<small>${g[1].join(", ")}</small></div><span class="chv">›</span></button>`).join("")+`</div>`;
+return h+`<div><button class="btn" data-grp="">‹ Catégories</button></div><div class="sh">${G0[0]}</div><div class="grp">`+G0[1].map(c=>`<button class="cat" data-cat="${c}"><div>${c}<small>${sub(c)}</small></div><span class="chv">›</span></button>`).join("")+`</div>`}
+h+=`<div><button class="btn" data-cat="">‹ ${S.grp||"Catégories"}</button></div><div class="sh">${S.cat}</div>`;
 if(S.cat=="Cardio")return h+cardioView();
 const cus=(S.custom[S.cat]||[]).map(n=>[n,"Perso",1]);
 h+=DATA[S.cat].concat(cus).filter(e=>!S.sel[id(e[0])]).map(e=>card(e[0],e[1],false,!!e[2])).join("");
@@ -454,13 +457,14 @@ const i=S.hist.findIndex(x=>x.id==r.id);if(i>=0)S.hist[i]=r;else S.hist.push(r)}
 function pushJ(k,x){(S.journal[k]=S.journal[k]||[]).push(x)}
 document.addEventListener("click",e=>{
 const t=e.target.closest("button");if(!t)return;const D=t.dataset;
-if(D.v){S.view=D.v;S.cat=null;S.page=null}
+if(D.v){S.view=D.v;S.cat=null;S.grp=null;S.page=null}
+else if(D.grp!==undefined){S.grp=D.grp||null;S.cat=null}
 else if(D.cat!==undefined){S.cat=D.cat||null}
 else if(D.pg!==undefined){S.page=D.pg||null}
 else if(t.id=="sv"){const nm=prompt("Nom de la séance ?");if(!nm)return;S.sessions.push({name:nm,items:Object.values(S.sel).map(x=>({n:x.n,note:x.note,sets:x.sets}))});S.view="set";S.page="mes"}
 else if(t.id=="nb"){const v=$("ni").value.trim();if(!v)return;(S.custom[S.cat]=S.custom[S.cat]||[]).push(v)}
 else if(D.delex){S.custom[S.cat]=(S.custom[S.cat]||[]).filter(x=>x!=D.delex)}
-else if(D.load!==undefined){const ss=S.sessions[+D.load];S.sel={};ss.items.forEach(x=>S.sel[id(x.n)]={n:x.n,note:x.note,sets:x.sets,done:0});S.start=null;S.last=null;S.fs=0;S.view="ex";S.cat=null;S.page=null}
+else if(D.load!==undefined){const ss=S.sessions[+D.load];S.sel={};ss.items.forEach(x=>S.sel[id(x.n)]={n:x.n,note:x.note,sets:x.sets,done:0});S.start=null;S.last=null;S.fs=0;S.view="ex";S.cat=null;S.grp=null;S.page=null}
 else if(D.delses!==undefined){if(!confirm("Supprimer cette séance enregistrée ?"))return;S.sessions.splice(+D.delses,1)}
 else if(D.add!==undefined){const k=D.k;if(D.add==="1")S.sel[k]={n:D.n,note:D.note,sets:3,done:0};else delete S.sel[k]}
 else if(D.i!==undefined){const s=S.sel[D.k],i=+D.i;
