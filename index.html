@@ -253,6 +253,15 @@ return`<div class="ex ${on?"in":""}"><div class="top"><div><div class="nm">${ES(
 
 /* CARDIO */
 const pace=(km,sec)=>{const p=sec/km;return Math.floor(p/60)+"'"+String(Math.round(p%60)).padStart(2,"0")+'"/km'};
+function musView(){const H=S.hist.filter(x=>x.type!="cardio"&&x.g),mon=monday(Date.now()).getTime(),n=Date.now();
+const G=Object.keys(DATA).filter(c=>c!="Autre");
+let h=`<div class="sh">Récupération</div><div class="nt">Vert : prêt à retravailler (3 jours ou plus). Orange : encore un peu chargé. Rouge : travaillé il y a moins de 2 jours.</div>`;
+h+=G.map(c=>{const L=H.filter(x=>x.g[c]);if(!L.length)return`<div class="food"><div class="fr"><div class="nm">${c}</div><div class="nt">Pas encore de données</div></div></div>`;
+const d=Math.floor((n-Math.max(...L.map(x=>x.e)))/864e5),col=d>=3?"#16a34a":d>=2?"#f59e0b":"#dc2626";
+return`<div class="food"><div class="fr"><div class="nm"><span style="color:${col}">●</span> ${c}</div><div class="nt">${d==0?"aujourd'hui":d==1?"hier":"il y a "+d+" jours"}</div></div></div>`}).join("");
+h+=`<div class="sh">Volume de la semaine</div><div class="nt">Séries par muscle depuis lundi. Repère : 10 à 20 séries par semaine pour progresser.</div>`;
+h+=G.map(c=>{const v=H.filter(x=>x.s>=mon).reduce((a,x)=>a+(x.g[c]||0),0);return`<div class="food"><div class="fr"><div class="nm">${c}</div><div class="nt">${v} séries</div></div><div class="bar"><i style="width:${Math.min(100,v/20*100)}%"></i></div></div>`}).join("");
+return h+`<div class="nt" style="margin-top:8px">Les données se remplissent à partir de tes prochaines séances.</div>`}
 const CT={course:["🏃 Course"],velo:["🚴 Vélo"],marche:["🚶 Marche"],rameur:["🚣 Rameur"]};
 const f5=sec=>Math.floor(sec/60)+"'"+String(Math.round(sec%60)).padStart(2,"0")+'"';
 const cmet=x=>{const t=x.ty||"course";return t=="velo"?Math.round(x.km/(x.dur/3600)*10)/10+" km/h":t=="rameur"?f5(x.dur/(x.km*2))+"/500 m":pace(x.km,x.dur)};
@@ -276,7 +285,7 @@ setInterval(()=>{const e=$("crt");if(e&&S.cr){const s=Math.floor((Date.now()-S.c
 /* PARAMETRES */
 function setView(){
 if(!S.page){
-const M=[["prof","Profil","Poids, taille, objectifs"],["suivi","Suivi des séances","Historique de tes séances terminées"],["bilan","Bilan","Semaine par semaine"],["mes","Mes séances enregistrées","Tes séances préenregistrées"],["ch","Suivi des charges","Les poids que tu utilises par exercice"],["rm","Record 1 RM","Ta charge max sur 1 répétition"],["sauv","Sauvegarde","Copier / restaurer toutes tes données"]];
+const M=[["prof","Profil","Poids, taille, objectifs"],["suivi","Suivi des séances","Historique de tes séances terminées"],["bilan","Bilan","Semaine par semaine"],["mes","Mes séances enregistrées","Tes séances préenregistrées"],["ch","Suivi des charges","Les poids que tu utilises par exercice"],["rm","Record 1 RM","Ta charge max sur 1 répétition"],["mus","Muscles","Récupération et volume de la semaine"],["sauv","Sauvegarde","Copier / restaurer toutes tes données"]];
 return`<div class="grp">`+M.map(m=>`<button class="cat" data-pg="${m[0]}"><div>${m[1]}<small>${m[2]}</small></div><span class="chv">›</span></button>`).join("")+`</div>`}
 const back=`<div><button class="btn" data-pg="">‹ Paramètres</button></div>`;
 if(S.page=="prof"){const P=S.prof;
@@ -291,6 +300,7 @@ if(S.page=="suivi"){const L=S.hist.slice().sort((a,b)=>b.s-a.s);
 return back+`<div class="sh">Suivi des séances (${L.length})</div>`+(L.length?"":`<div class="nt">Rien pour l'instant : une séance s'enregistre toute seule quand toutes ses séries sont cochées.</div>`)+L.map(x=>`<div class="food"><div class="fr"><div><div class="nm">${fd(x.s,{weekday:"short",day:"numeric",month:"short"})} · ${x.type=="cardio"?"Cardio"+(x.ty&&x.ty!="course"?" · "+CT[x.ty][0].slice(3):""):(x.t||"Muscu")}</div><div class="nt">${fmt(new Date(x.s))}–${fmt(new Date(x.e))} · ${dur(x.dur)} · ${x.type=="cardio"?x.km+" km":x.ex+" exos, "+x.sets+" séries"}</div></div><button class="sm" data-delh="${x.id}">🗑</button></div></div>`).join("")}
 if(S.page=="bilan")return back+bilanView();
 if(S.page=="mes")return back+`<div class="sh">Mes séances enregistrées</div>`+(S.sessions.length?"":`<div class="nt">Aucune pour l'instant. Ajoute des exos dans Exercice, puis touche « Enregistrer comme séance ».</div>`)+S.sessions.map((x,i)=>`<div class="ex"><div class="nm">${ES(x.name)}</div><div class="nt">${x.items.length} exos : ${x.items.map(y=>ES(y.n)).join(", ")}</div><div class="dots"><button class="btn p" data-load="${i}">Charger</button><button class="btn" data-delses="${i}">Supprimer</button></div></div>`).join("");
+if(S.page=="mus")return back+musView();
 if(S.page=="sauv")return back+`<div class="sh">Sauvegarde</div><div class="ex"><div class="nt">1) Sur l'appli qui contient tes données : touche « Copier mes données ».<br>2) Sur l'autre appli : colle dans la case, puis touche « Restaurer ». Cela remplace les données de cette appli.</div><textarea class="in" id="sta" rows="6" style="width:100%;margin-top:8px" placeholder="Colle ici tes données pour restaurer"></textarea><div class="dots"><button class="btn p" id="sexp">Copier mes données</button><button class="btn" id="simp">Restaurer</button></div><div class="nt" id="sst"></div></div>`;
 return back+chView(S.page)}
 function bilanView(){
@@ -434,11 +444,12 @@ el.innerHTML=`<div class="food"><div class="nm">🍽️ Objectif prise de masse 
 
 /* EVENTS */
 function catOf(n){for(const c in DATA)if(DATA[c].some(e=>e[0]==n))return c;for(const c in S.custom)if((S.custom[c]||[]).includes(n))return c;return null}
+function sGrp(v){const m={};v.forEach(s=>{const c=catOf(s.n);if(c&&c!="Autre")m[c]=(m[c]||0)+(+s.sets||0)});return m}
 function sTitle(v){const m={};v.forEach(s=>{const c=catOf(s.n);if(!c||c=="Autre")return;m[c]=m[c]||[0,0];m[c][0]++;m[c][1]+=s.sets});const k=Object.keys(m).sort((a,b)=>m[b][0]-m[a][0]||m[b][1]-m[a][1]).slice(0,3);if(!k.length)return"Muscu";const l=k.map((x,i)=>i?x.toLowerCase():x);return l.length>1?l.slice(0,-1).join(", ")+" et "+l[l.length-1]:l[0]}
 function autoLog(){
 let tot=0,done=0;const v=Object.values(S.sel);v.forEach(s=>{tot+=s.sets;done+=s.done});
 if(!tot||done<tot||!S.start)return;
-const e=Date.now(),r={id:"m"+S.start,type:"muscu",s:S.start,e,dur:Math.round((e-S.start)/1000),ex:v.length,sets:tot,t:sTitle(v)};
+const e=Date.now(),r={id:"m"+S.start,type:"muscu",s:S.start,e,dur:Math.round((e-S.start)/1000),ex:v.length,sets:tot,t:sTitle(v),g:sGrp(v)};
 const i=S.hist.findIndex(x=>x.id==r.id);if(i>=0)S.hist[i]=r;else S.hist.push(r)}
 function pushJ(k,x){(S.journal[k]=S.journal[k]||[]).push(x)}
 document.addEventListener("click",e=>{
