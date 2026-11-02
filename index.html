@@ -5,6 +5,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Alcide"><meta name="theme-color" content="#0c0d0f">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>try{document.documentElement.setAttribute("data-skin",JSON.parse(localStorage.getItem("muscu_v3")||"{}").th||"alcide")}catch(e){document.documentElement.setAttribute("data-skin","alcide")}</script>
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--tx:#14161a;--mu:#6b7280;--ac:#e8590c;--ok:#16a34a;--bd:#e3e5e9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1013;--card:#181b20;--tx:#f1f2f4;--mu:#9097a3;--bd:#262a31}}
@@ -56,6 +57,45 @@ h1{font-size:24px;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
 .go{flex:1;height:64px;border-radius:16px;border:0;font-size:20px;font-weight:700;color:#fff;background:var(--ok)}
 .go.run{background:#dc2626}
 .last{font-size:12px;color:var(--mu)}
+
+.ico,.ring,.rk{display:none}
+:root[data-skin="alcide"]{--bg:#0d0c09;--card:#171510;--tx:#f6f0e4;--mu:#a1977f;--ac:#d6a72c;--ok:#d6a72c;--bd:#2b2619;--gold:linear-gradient(135deg,#ffe08a,#b8820e)}
+[data-skin="alcide"] body{background:radial-gradient(120% 60% at 50% 0%,#1d1809 0%,#0d0c09 55%) fixed,#0d0c09}
+[data-skin="alcide"] .btn.p,[data-skin="alcide"] .cs .btn.on{background:var(--gold);color:#1a1204;font-weight:700;border:0}
+[data-skin="alcide"] .nv{border-radius:16px;background:var(--card)}
+[data-skin="alcide"] .nv.on{background:var(--gold);color:#1a1204;box-shadow:0 4px 16px rgba(184,130,14,.4)}
+[data-skin="alcide"] .est{border-color:#3a3119;box-shadow:0 2px 14px rgba(0,0,0,.4)}
+[data-skin="alcide"] .est b,[data-skin="alcide"] .big{background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-skin="alcide"] .sh{color:#b8975a;letter-spacing:.09em}
+[data-skin="alcide"] .list{gap:14px}
+[data-skin="alcide"] .ex,[data-skin="alcide"] .food{padding:16px;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+[data-skin="alcide"] .ex.in,[data-skin="alcide"] .ex.cur{border-color:#8a6a1c}
+[data-skin="alcide"] .dots{gap:10px;margin-top:14px}
+[data-skin="alcide"] .dot{width:48px;height:48px}
+[data-skin="alcide"] .dot.d{background:var(--gold);border-color:transparent;color:#1a1204}
+[data-skin="alcide"] .dot.n{border-color:var(--ac);color:var(--ac)}
+[data-skin="alcide"] .dot.pop{animation:dpop .4s ease-out}
+@keyframes dpop{0%{transform:scale(.8)}50%{transform:scale(1.3);box-shadow:0 0 0 8px rgba(214,167,44,.25)}100%{transform:scale(1)}}
+[data-skin="alcide"] .cat{padding:20px 18px;border-radius:18px;gap:14px;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+[data-skin="alcide"] .cat>div{flex:1}
+[data-skin="alcide"] .cat .chv{color:var(--ac)}
+[data-skin="alcide"] .grp{gap:12px}
+[data-skin="alcide"] .ico{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:14px;border:1px solid #6b5316;background:rgba(214,167,44,.08);flex:none}
+[data-skin="alcide"] .ico svg{width:30px;height:30px;fill:none;stroke:#e8c25a;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+[data-skin="alcide"] .bar{height:10px;background:#2b2619}
+[data-skin="alcide"] .bar i{background:var(--gold);border-radius:6px;box-shadow:0 0 8px rgba(214,167,44,.45)}
+[data-skin="alcide"] .big.gold{font-size:40px;line-height:1.15}
+[data-skin="alcide"] .big.gold span{-webkit-text-fill-color:var(--mu)}
+[data-skin="alcide"] .rk{display:block;font-size:34px;font-weight:700;line-height:1.1;background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+[data-skin="alcide"] .rk small{font-size:15px;-webkit-text-fill-color:var(--mu)}
+[data-skin="alcide"] .rmain{display:none}
+[data-skin="alcide"] .chrono{background:rgba(23,21,16,.7);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-top:1px solid rgba(214,167,44,.3)}
+[data-skin="alcide"] .go{background:var(--gold);color:#1a1204}
+[data-skin="alcide"] .go.run{background:#dc2626;color:#fff}
+[data-skin="alcide"] .time{font-size:40px;min-width:110px}
+[data-skin="alcide"] .ring{display:block;width:50px;height:50px;flex:none;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:4}.ring .rb{stroke:#2b2619}.ring .rf{stroke:#e8c25a;stroke-linecap:round;stroke-dasharray:119.4;stroke-dashoffset:119.4;transition:stroke-dashoffset .25s linear}
+.skbtn{display:flex;gap:10px;margin-top:10px}.skbtn .btn{flex:1;padding:14px}.skbtn .btn.on{border-color:var(--ac);color:var(--ac)}
 </style></head><body>
 <header>
 <div class="lg"><img src="data:image/png;base64,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" alt="Alcide"></div>
@@ -66,7 +106,7 @@ h1{font-size:24px;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
 <div class="nav" id="nav"></div>
 <div class="list" id="list"></div>
 <div class="chrono">
-<div><div class="time" id="ct">0:00</div><div class="last" id="cl">Repos : appuie pour lancer</div></div>
+<svg class="ring" viewBox="0 0 44 44"><circle class="rb" cx="22" cy="22" r="19"/><circle class="rf" id="rf" cx="22" cy="22" r="19"/></svg><div><div class="time" id="ct">0:00</div><div class="last" id="cl">Repos : appuie pour lancer</div></div>
 <button class="go" id="cb">▶ Lancer</button>
 </div>
 <script>
@@ -81,6 +121,7 @@ const DATA={
 "Cardio":[],
 "Autre":[["Shrugs","Trapèzes"]]
 };
+const ICON={"Push": "<svg viewBox=\"0 0 24 24\"><path d=\"M4 20l7.500-7.500\"/><path d=\"M10.500 14c-2.500-3 0-8.500 6.500-10.500 2.200-.6 3.500 1 3 2.800C18.500 12 14 16.500 10.500 14z\"/><path d=\"M14 10l1.500 1.500M16.500 7.500L18 9\"/></svg>", "Pull": "<svg viewBox=\"0 0 24 24\"><path d=\"M7 3c9 3 9 15 0 18\"/><path d=\"M7 3v18\"/><path d=\"M3 12h14\"/><path d=\"M14 9l3 3-3 3\"/></svg>", "Legs": "<svg viewBox=\"0 0 24 24\"><path d=\"M3 18c1-7 6-12 18-13-3 1-4 3-4 4 2 0 3 0 4 0-3 2-4 3-4.500 4 2 .5 3 .5 4 .5-3 2.500-7 3.500-11 3.500z\"/><path d=\"M8 14c3-.5 6-2 9-5\"/></svg>", "Cardio": "<svg viewBox=\"0 0 24 24\"><path d=\"M12 3c0 5-5 6-5 11a5 5 0 0 0 10 0c0-3-2-4-2.500-6.500C14 5.500 12 4.500 12 3z\"/><path d=\"M12 20a2.500 2.500 0 0 1-2.500-2.500c0-1.500 1.500-2 2.500-3.500 1 1.500 2.500 2 2.500 3.500A2.500 2.500 0 0 1 12 20z\"/></svg>"};
 const GROUPS=[["Push",["Pecs","Triceps","Épaules","Autre"]],["Pull",["Dos","Biceps"]],["Legs",["Jambes"]],["Cardio",["Abdos","Cardio"]]];
 const FOODS=[
 ["Blanc de poulet","Viande",31,165,150],
@@ -230,9 +271,11 @@ const allEx=()=>{const s=new Set();Object.keys(DATA).forEach(c=>{DATA[c].forEach
 const catCount=c=>DATA[c].length+(S.custom[c]||[]).length;
 
 function render(){
+document.documentElement.setAttribute("data-skin",S.th||"alcide");
 $("nav").innerHTML=[["ex","Exercice"],["nut","Nutrition"],["set","Paramètres"]].map(([k,l])=>`<button class="nv ${S.view==k?"on":""}" data-v="${k}">${l}</button>`).join("");
 $("list").innerHTML=S.view=="ex"?exView():S.view=="nut"?nutTab():setView();
 eta();profRes();
+setTimeout(()=>{JUST=""},0);
 }
 function sesBlock(){const k=Object.keys(S.sel);if(!k.length)return"";
 return`<div class="sh">Dans ma séance (${k.length})</div>`+k.map(x=>card(S.sel[x].n,S.sel[x].note,true,false)).join("")+`<div style="padding:10px 0"><button class="btn p" id="sv">💾 Enregistrer comme séance</button></div>`}
@@ -241,7 +284,7 @@ let h=sesBlock();
 if(!S.cat){
 const sub=c=>c=="Cardio"?S.hist.filter(x=>x.type=="cardio").length+" sortie(s) enregistrée(s)":catCount(c)+" exercice(s)";
 const G0=GROUPS.find(g=>g[0]==S.grp);
-if(!G0)return h+`<div class="grp">`+GROUPS.map(g=>`<button class="cat" data-grp="${g[0]}"><div>${g[0]}<small>${g[1].join(", ")}</small></div><span class="chv">›</span></button>`).join("")+`</div>`;
+if(!G0)return h+`<div class="grp">`+GROUPS.map(g=>`<button class="cat" data-grp="${g[0]}"><span class="ico">${ICON[g[0]]}</span><div>${g[0]}<small>${g[1].join(", ")}</small></div><span class="chv">›</span></button>`).join("")+`</div>`;
 return h+`<div><button class="btn" data-grp="">‹ Catégories</button></div><div class="sh">${G0[0]}</div><div class="grp">`+G0[1].map(c=>`<button class="cat" data-cat="${c}"><div>${c}<small>${sub(c)}</small></div><span class="chv">›</span></button>`).join("")+`</div>`}
 h+=`<div><button class="btn" data-cat="">‹ ${S.grp||"Catégories"}</button></div><div class="sh">${S.cat}</div>`;
 if(S.cat=="Cardio")return h+cardioView();
@@ -250,7 +293,7 @@ h+=DATA[S.cat].concat(cus).filter(e=>!S.sel[id(e[0])]).map(e=>card(e[0],e[1],fal
 return h+`<div class="ex"><div class="nm">Créer mon exo (${S.cat})</div><div class="dots"><input class="in" id="ni" placeholder="Nom de l'exercice"><button class="btn p" id="nb">Créer</button></div></div>`}
 function card(n,note,on,cu){
 const k=id(n),s=S.sel[k];let d="";
-if(on){d=`<div class="dots">`;for(let i=0;i<s.sets;i++)d+=`<button class="dot ${i<s.done?"d":i==s.done?"n":""}" data-k="${k}" data-i="${i}">${i<s.done?"✓":i+1}</button>`;
+if(on){d=`<div class="dots">`;for(let i=0;i<s.sets;i++)d+=`<button class="dot ${i<s.done?"d":i==s.done?"n":""}${JUST==k+"|"+i&&i<s.done?" pop":""}" data-k="${k}" data-i="${i}">${i<s.done?"✓":i+1}</button>`;
 d+=`<button class="sm" data-k="${k}" data-a="-">−</button><button class="sm" data-k="${k}" data-a="+">+</button></div>`}
 return`<div class="ex ${on?"in":""}"><div class="top"><div><div class="nm">${ES(n)}</div><div class="nt">${ES(note)}</div></div><div style="display:flex;gap:6px"><button class="btn ${on?"":"p"}" data-k="${k}" data-n="${ES(n)}" data-note="${ES(note)}" data-add="${on?0:1}">${on?"Retirer":"+ Ajouter"}</button>${cu&&!on?`<button class="sm" data-delex="${ES(n)}">🗑</button>`:""}</div></div>${d}</div>`}
 
@@ -288,7 +331,7 @@ setInterval(()=>{const e=$("crt");if(e&&S.cr){const s=Math.floor((Date.now()-S.c
 /* PARAMETRES */
 function setView(){
 if(!S.page){
-const M=[["prof","Profil","Poids, taille, objectifs"],["suivi","Suivi des séances","Historique de tes séances terminées"],["bilan","Bilan","Semaine par semaine"],["mes","Mes séances enregistrées","Tes séances préenregistrées"],["ch","Suivi des charges","Les poids que tu utilises par exercice"],["rm","Record 1 RM","Ta charge max sur 1 répétition"],["mus","Muscles","Récupération et volume de la semaine"],["sauv","Sauvegarde","Copier / restaurer toutes tes données"]];
+const M=[["prof","Profil","Poids, taille, objectifs"],["suivi","Suivi des séances","Historique de tes séances terminées"],["bilan","Bilan","Semaine par semaine"],["mes","Mes séances enregistrées","Tes séances préenregistrées"],["ch","Suivi des charges","Les poids que tu utilises par exercice"],["rm","Record 1 RM","Ta charge max sur 1 répétition"],["theme","Apparence","Thème Alcide (noir et or) ou classique"],["mus","Muscles","Récupération et volume de la semaine"],["sauv","Sauvegarde","Copier / restaurer toutes tes données"]];
 return`<div class="grp">`+M.map(m=>`<button class="cat" data-pg="${m[0]}"><div>${m[1]}<small>${m[2]}</small></div><span class="chv">›</span></button>`).join("")+`</div>`}
 const back=`<div><button class="btn" data-pg="">‹ Paramètres</button></div>`;
 if(S.page=="prof"){const P=S.prof;
@@ -303,6 +346,7 @@ if(S.page=="suivi"){const L=S.hist.slice().sort((a,b)=>b.s-a.s);
 return back+`<div class="sh">Suivi des séances (${L.length})</div>`+(L.length?"":`<div class="nt">Rien pour l'instant : une séance s'enregistre toute seule quand toutes ses séries sont cochées.</div>`)+L.map(x=>`<div class="food"><div class="fr"><div><div class="nm">${fd(x.s,{weekday:"short",day:"numeric",month:"short"})} · ${x.type=="cardio"?"Cardio"+(x.ty&&x.ty!="course"?" · "+CT[x.ty][0].slice(3):""):(x.t||"Muscu")}</div><div class="nt">${fmt(new Date(x.s))}–${fmt(new Date(x.e))} · ${dur(x.dur)} · ${x.type=="cardio"?x.km+" km":x.ex+" exos, "+x.sets+" séries"}</div></div><button class="sm" data-delh="${x.id}">🗑</button></div></div>`).join("")}
 if(S.page=="bilan")return back+bilanView();
 if(S.page=="mes")return back+`<div class="sh">Mes séances enregistrées</div>`+(S.sessions.length?"":`<div class="nt">Aucune pour l'instant. Ajoute des exos dans Exercice, puis touche « Enregistrer comme séance ».</div>`)+S.sessions.map((x,i)=>`<div class="ex"><div class="nm">${ES(x.name)}</div><div class="nt">${x.items.length} exos : ${x.items.map(y=>ES(y.n)).join(", ")}</div><div class="dots"><button class="btn p" data-load="${i}">Charger</button><button class="btn" data-delses="${i}">Supprimer</button></div></div>`).join("");
+if(S.page=="theme"){const t=S.th||"alcide";return back+`<div class="sh">Apparence</div><div class="ex"><div class="nt">Choisis le look de l'appli. Tes données ne changent pas.</div><div class="skbtn"><button class="btn ${t=="alcide"?"on":""}" data-th="alcide">Thème Alcide<br><small>noir et or</small></button><button class="btn ${t=="classique"?"on":""}" data-th="classique">Thème classique<br><small>comme avant</small></button></div></div>`}
 if(S.page=="mus")return back+musView();
 if(S.page=="sauv")return back+`<div class="sh">Sauvegarde</div><div class="ex"><div class="nt">1) Sur l'appli qui contient tes données : touche « Copier mes données ».<br>2) Sur l'autre appli : colle dans la case, puis touche « Restaurer ». Cela remplace les données de cette appli.</div><textarea class="in" id="sta" rows="6" style="width:100%;margin-top:8px" placeholder="Colle ici tes données pour restaurer"></textarea><div class="dots"><button class="btn p" id="sexp">Copier mes données</button><button class="btn" id="simp">Restaurer</button></div><div class="nt" id="sst"></div></div>`;
 return back+chView(S.page)}
@@ -333,7 +377,7 @@ const names=Object.keys(st).sort((a,b)=>st[b][st[b].length-1].ts-st[a][st[a].len
 if(!names.length)return h+`<div class="nt">Vide pour l'instant : cherche un exercice ci-dessus pour commencer.</div>`;
 return h+names.map(n=>{const L=st[n],la=L[L.length-1],k=kind+"|"+n,op=OPEN[k];
 const main=rm?"Record : "+Math.max(...L.map(x=>x.kg))+" kg":la.kg+" kg × "+la.reps+" rép.";
-return`<div class="ex"><div class="top"><div><div class="nm">${ES(n)}</div><div class="nt">${main} · ${fd(la.ts)}</div></div><button class="btn" data-hist="${ES(k)}">${op?"Masquer":"Historique"}</button></div>`+(op?`<div class="nt" style="margin-top:8px">${prog(L)}</div>`+L.slice().reverse().map(x=>`<div class="fr"><div class="nt">${fd(x.ts)} · ${x.kg} kg${x.reps?" × "+x.reps:""}</div><button class="sm" data-delent="${ES(k)}" data-ts="${x.ts}">🗑</button></div>`).join(""):"")+`</div>`}).join("")}
+return`<div class="ex"><div class="top"><div><div class="nm">${ES(n)}</div><div class="nt ${rm?"rmain":""}">${main} · ${fd(la.ts)}</div></div>${rm?`<div class="rk">${Math.max(...L.map(x=>x.kg))}<small> kg</small></div>`:""}<button class="btn" data-hist="${ES(k)}">${op?"Masquer":"Historique"}</button></div>`+(op?`<div class="nt" style="margin-top:8px">${prog(L)}</div>`+L.slice().reverse().map(x=>`<div class="fr"><div class="nt">${fd(x.ts)} · ${x.kg} kg${x.reps?" × "+x.reps:""}</div><button class="sm" data-delent="${ES(k)}" data-ts="${x.ts}">🗑</button></div>`).join(""):"")+`</div>`}).join("")}
 function cres(kind,q){
 const t=q.trim(),n=norm(t);if(!n)return"";
 const L=allEx().filter(x=>norm(x).includes(n)).slice(0,8);
@@ -347,7 +391,7 @@ function allFoodsList(){return S.foods.map(f=>[f.n,f.c,f.p,f.k,f.g])}
 function foodOpts(q){const n=norm(q.trim());let o="";
 allFoodsList().forEach((f,i)=>{if(!n||norm(f[0]).includes(n)||norm(f[1]).includes(n))o+=`<option value="${i}">${ES(f[0])} — ${f[4]} g ≈ ${Math.round(f[2]*f[4]/10)/10} g prot., ${Math.round(f[3]*f[4]/100)} kcal</option>`});
 return o||'<option value="" disabled selected>Aucun résultat</option>'}
-let SC=null,SCST="",SL=false,RD=null,MEAL=null,MST="";
+let JUST="";let SC=null,SCST="",SL=false,RD=null,MEAL=null,MST="";
 function mealUI(){if(!MST&&!MEAL)return"";let h=`<div class="sh">🍽️ Estimation du plat</div><div class="food"><div class="nt" id="mst">${ES(MST)}</div>`;
 if(MEAL){h+=MEAL.map((x,i)=>`<div class="pg" style="margin-top:8px"><label>Aliment<input class="in" data-m="${i}|n" value="${ES(x.n)}"></label><label>Quantité (g)<input class="in" type="number" inputmode="decimal" data-m="${i}|g" value="${x.g}"></label><label>Calories (kcal)<input class="in" type="number" inputmode="decimal" data-m="${i}|k" value="${x.k}"></label><label>Protéines (g)<input class="in" type="number" inputmode="decimal" data-m="${i}|p" value="${x.p}"></label><button class="sm" data-mdel="${i}">🗑</button></div>`).join("")+`<div class="dots"><button class="btn p" id="madd">Ajouter au journal</button><button class="btn" id="mcx">Annuler</button></div>`}
 return h+`</div>`}
@@ -411,10 +455,10 @@ const ck=curKey(),day=S.journal[ck]||[],T=dayTot(ck),totalP=T.p,totalK=T.k,lb=da
 const target=protTarget(),pct=target?Math.min(100,Math.round(totalP/target*100)):0,cg=calGoal(),kpct=cg?Math.min(100,Math.round(totalK/cg.goal*100)):0;
 let hh=`<div class="food"><div class="fr" style="border:0;padding:0"><button class="sm" data-dn="-1">‹</button><div class="nm" style="text-transform:capitalize">${lb}</div><button class="sm" data-dn="1" ${isT?"disabled style=\"opacity:.3\"":""}>›</button></div></div>
 <div class="sh">🥩 Protéines · ${lb}</div>
-<div class="food"><div class="big">${Math.round(totalP)} g<span style="font-size:16px;color:var(--mu);font-weight:500">${target?" / "+target+" g":""}</span></div>
+<div class="food"><div class="big gold">${Math.round(totalP)} g<span style="font-size:16px;color:var(--mu);font-weight:500">${target?" / "+target+" g":""}</span></div>
 ${target?`<div class="bar"><i style="width:${pct}%"></i></div><div class="nt" style="margin-top:6px">${totalP>=target?"Objectif atteint 💪":"Il te reste environ "+Math.max(0,Math.round(target-totalP))+" g à manger"}</div>`:`<div class="nt">Renseigne ton poids dans Paramètres › Profil pour voir ton objectif.</div>`}</div>
 <div class="sh">🔥 Calories · ${lb}</div>
-<div class="food"><div class="big">${Math.round(totalK)} kcal<span style="font-size:16px;color:var(--mu);font-weight:500">${cg?" / ~"+Math.round(cg.goal)+" kcal":""}</span></div>
+<div class="food"><div class="big gold">${Math.round(totalK)} kcal<span style="font-size:16px;color:var(--mu);font-weight:500">${cg?" / ~"+Math.round(cg.goal)+" kcal":""}</span></div>
 ${cg?`<div class="bar"><i style="width:${kpct}%"></i></div><div class="nt" style="margin-top:6px">${totalK>=cg.hi?"Au-dessus de l'objectif prise de masse":totalK>=cg.goal?"Objectif atteint 💪":"Il te reste environ "+Math.max(0,Math.round(cg.goal-totalK))+" kcal pour ta prise de masse légère"}</div><div class="nt" style="margin-top:4px">Fourchette ${Math.round(cg.lo)}–${Math.round(cg.hi)} kcal</div>`:`<div class="nt">Renseigne ton poids et ta taille dans Paramètres › Profil pour voir ton objectif.</div>`}</div>`;
 hh+=scanUI()+mealUI();
 hh+=`<div class="sh">Ajouter un aliment (${lb})</div><div class="food">
@@ -437,7 +481,7 @@ const w=+S.prof.w,cg=calGoal();
 if(!cg){el.innerHTML='<div class="nt">Renseigne ton poids et ta taille pour voir les résultats.</div>';return}
 const prot=Math.round(1.8*w),fat=Math.round(w),carb=Math.round((cg.goal-prot*4-fat*9)/4),ld=lastDur();
 el.innerHTML=`<div class="food"><div class="nm">🍽️ Objectif prise de masse légère</div>
-<div class="big" style="margin-top:6px">~${r10(cg.goal)} kcal<span style="font-size:14px;color:var(--mu);font-weight:500"> / jour</span></div>
+<div class="big gold" style="margin-top:6px">~${r10(cg.goal)} kcal<span style="font-size:14px;color:var(--mu);font-weight:500"> / jour</span></div>
 <div class="nt" style="margin-top:6px">Fourchette ${r10(cg.lo)}–${r10(cg.hi)} kcal</div>
 <div class="nt" style="margin-top:2px">Maintien estimé ~${r10(cg.tdee)} kcal · Métabolisme de base ~${r10(cg.bmr)} kcal</div>
 <div class="fr" style="margin-top:10px"><div class="nt">Protéines</div><b>~${prot} g</b></div>
@@ -458,6 +502,7 @@ function pushJ(k,x){(S.journal[k]=S.journal[k]||[]).push(x)}
 document.addEventListener("click",e=>{
 const t=e.target.closest("button");if(!t)return;const D=t.dataset;
 if(D.v){S.view=D.v;S.cat=null;S.grp=null;S.page=null}
+else if(D.th){S.th=D.th}
 else if(D.grp!==undefined){S.grp=D.grp||null;S.cat=null}
 else if(D.cat!==undefined){S.cat=D.cat||null}
 else if(D.pg!==undefined){S.page=D.pg||null}
@@ -468,7 +513,7 @@ else if(D.load!==undefined){const ss=S.sessions[+D.load];S.sel={};ss.items.forEa
 else if(D.delses!==undefined){if(!confirm("Supprimer cette séance enregistrée ?"))return;S.sessions.splice(+D.delses,1)}
 else if(D.add!==undefined){const k=D.k;if(D.add==="1")S.sel[k]={n:D.n,note:D.note,sets:3,done:0};else delete S.sel[k]}
 else if(D.i!==undefined){const s=S.sel[D.k],i=+D.i;
-if(i<s.done){s.done=i}else{s.done=i+1;if(!S.start){S.start=Date.now();S.fs=1}S.last=Date.now();autoLog()}}
+if(i<s.done){s.done=i}else{JUST=D.k+"|"+i;s.done=i+1;if(!S.start){S.start=Date.now();S.fs=1}S.last=Date.now();autoLog()}}
 else if(D.a){const s=S.sel[D.k];s.sets=Math.max(1,Math.min(10,s.sets+(D.a=="+"?1:-1)));s.done=Math.min(s.done,s.sets)}
 else if(t.id=="sexp"){const ta=$("sta");ta.value=JSON.stringify(S);ta.focus();ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(e){}$("sst").textContent=ok?"Copié ! Colle-le maintenant dans l'autre appli.":"Appuie longuement sur le texte, puis Tout sélectionner et Copier.";return}
 else if(t.id=="simp"){let o;try{o=JSON.parse($("sta").value.trim())}catch(e){}if(!o||typeof o!="object"||Array.isArray(o)){$("sst").textContent="Données invalides : colle le texte copié en entier.";return}if(!confirm("Remplacer les données de cette appli par celles collées ?"))return;S=Object.assign(S,o)}
@@ -548,7 +593,7 @@ const end=new Date(Math.max(Date.now(),base+rem*pace*1000));
 $("eta").textContent="~ "+fmt(end);
 $("etaTxt").textContent=tot+" séries prévues ("+ne+" exos) · "+rem+" restantes · ~"+Math.round(pace)+" s/série · durée totale ~"+dur(tot*pace)+(+S.prof.w?" · ~"+burn(tot*pace)+" kcal":"")+(S.start?"":" · appuie sur Démarrer")}
 let run=false,t0=0,iv;
-function show(ms){const s=Math.floor(ms/1000);$("ct").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function show(ms){const s=Math.floor(ms/1000);const rf=$("rf");if(rf)rf.style.strokeDashoffset=119.4*(1-Math.min(1,ms/1000/(S.pace||150)));$("ct").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
 $("cb").onclick=()=>{
 if(!run){run=true;t0=Date.now();$("cb").textContent="⏸ Stop";$("cb").className="go run";$("cl").textContent="En cours…";iv=setInterval(()=>show(Date.now()-t0),200)}
 else{run=false;clearInterval(iv);const el=Date.now()-t0;show(0);$("cb").textContent="▶ Lancer";$("cb").className="go";
