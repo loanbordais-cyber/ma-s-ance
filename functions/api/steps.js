@@ -9,7 +9,7 @@ export async function onRequest({request,env}){
   if(!/^[A-Za-z0-9_-]{16,64}$/.test(t))return J({error:"code invalide"},400);
   const key="s:"+t;
   let n=u.searchParams.get("n");
-  if(n===null&&request.method==="POST"){try{const b=await request.json();n=b.n}catch(e){}}
+  if((n===null||n==="")&&request.method==="POST"){try{const b=await request.json();n=b.n}catch(e){}}
   if(n!==null&&n!==undefined&&n!==""){
     const v=Math.round(parseFloat(String(n).replace(",",".")));
     if(!(v>=0&&v<200000))return J({error:"nombre invalide"},400);
