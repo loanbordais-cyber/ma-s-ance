@@ -1,6 +1,6 @@
 const MODEL="@cf/google/gemma-4-26b-a4b-it";
 const J=(o,s=200)=>new Response(JSON.stringify(o,null,2),{status:s,headers:{"Content-Type":"application/json; charset=utf-8"}});
-const SYS='Tu es nutritionniste. On te montre la photo d\'un repas. Réponds UNIQUEMENT par un tableau JSON, sans texte avant ni après, sans balises de code. Chaque élément : {"n":"nom de l\'aliment en français","g":grammes estimés (nombre),"k":kcal totales de cette portion (nombre),"p":protéines totales en g de cette portion (nombre)}. Ajoute l\'huile ou la sauce si probable.';
+const SYS='Tu es nutritionniste. On te montre la photo d\'un repas pris dans un restaurant universitaire (cantine, CROUS) : les portions servies y sont plutôt petites. Base-toi sur les portions moyennes d\'un plateau de restaurant universitaire (par exemple viande ou poisson 80 à 120 g, féculents cuits 120 à 180 g, légumes 80 à 150 g, fromage 20 à 30 g, pain 25 à 40 g, dessert laitier 100 à 125 g) et ne surestime pas : en cas de doute, choisis la valeur la plus basse. N\'ajoute pas d\'huile, de beurre ni de sauce si tu ne les vois pas clairement. Réponds UNIQUEMENT par un tableau JSON, sans texte avant ni après, sans balises de code. Chaque élément : {"n":"nom de l\'aliment en français","g":grammes estimés (nombre),"k":kcal totales de cette portion (nombre),"p":protéines totales en g de cette portion (nombre)}.';
 function textOf(r){
 if(r==null)return"";if(typeof r==="string")return r;
 const m=r.choices&&r.choices[0]&&r.choices[0].message;

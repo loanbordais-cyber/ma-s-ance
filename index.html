@@ -474,7 +474,7 @@ return h+`</div>`}
 async function mealScan(f){MST="Analyse en cours…";MEAL=null;render();
 try{const bm=await createImageBitmap(f),k=Math.min(1,640/Math.max(bm.width,bm.height)),c=document.createElement("canvas");c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);c.getContext("2d").drawImage(bm,0,0,c.width,c.height);
 const b=await new Promise(r=>c.toBlob(r,"image/jpeg",.8));const r=await fetch("/api/meal",{method:"POST",body:b,headers:{"Content-Type":"image/jpeg"}});const j=await r.json();
-if(!r.ok||!j.items||!j.items.length)throw new Error(j.error||"vide");MEAL=j.items;MST="Estimation à vérifier : corrige les valeurs si besoin."}
+if(!r.ok||!j.items||!j.items.length)throw new Error(j.error||"vide");MEAL=j.items;MEAL.forEach(x=>{x.g0=+x.g||0;x.k0=+x.k||0;x.p0=+x.p||0});MST="Estimation à vérifier : corrige les valeurs si besoin."}
 catch(e){MEAL=null;MST="Analyse impossible ("+(e.message||"erreur")+"). Réessaie ou ajoute à la main."}
 render()}
 function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator();o.frequency.value=1000;o.connect(a.destination);o.start();setTimeout(()=>{o.stop();a.close()},120)}catch(e){}try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}
@@ -669,7 +669,9 @@ if(e.target.id=="bcf"){st("Lecture du code-barres…");try{await lookup(await re
 document.addEventListener("input",e=>{
 if(e.target.id=="fq"){const sel=$("fsel");sel.innerHTML=foodOpts(e.target.value);if(sel.options.length&&!sel.options[0].disabled)sel.selectedIndex=0;return}
 if(e.target.id=="cq"){$("cres").innerHTML=cres(e.target.dataset.kind,e.target.value);return}
-if(e.target.dataset&&e.target.dataset.m){const[i,f]=e.target.dataset.m.split("|");MEAL[+i][f]=f=="n"?e.target.value:parseFloat(e.target.value)||0;return}
+if(e.target.dataset&&e.target.dataset.m){const[i,f]=e.target.dataset.m.split("|");{const x=MEAL[+i];x[f]=f=="n"?e.target.value:parseFloat(e.target.value)||0;
+if(f=="g"){if(x.g0>0){x.k=Math.round(x.k0*x.g/x.g0);x.p=Math.round(x.p0*x.g/x.g0*10)/10;const lk=document.querySelector('[data-m="'+i+'|k"]'),lp=document.querySelector('[data-m="'+i+'|p"]');if(lk)lk.value=x.k;if(lp)lp.value=x.p}}
+else if(f=="k"||f=="p"){x.g0=x.g;x.k0=x.k;x.p0=x.p}}return}
 const k=e.target.dataset&&e.target.dataset.p;if(!k)return;S.prof[k]=e.target.value;save();profRes();eta()});
 const HV=/^(Développé (couché|incliné|militaire)|Squat|Tirage bûcheron|Rowing (barre|Yates|Meadows|haltère))/i;
 function eta(){
