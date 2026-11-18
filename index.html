@@ -49,6 +49,10 @@ h1{font-size:24px;margin:0 0 12px;font-weight:800;letter-spacing:-.02em}
 .sm{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:18px}
 .sh{margin:14px 0 4px;font-size:13px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em}
 .in{flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px}
+.chf{display:flex;gap:10px;align-items:flex-end;margin-top:10px}.chf label{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu)}.chf .in{width:100%;min-width:0;box-sizing:border-box}
+.rp{appearance:none;-webkit-appearance:none;border:1px solid var(--ac);background:transparent;color:var(--ac);border-radius:999px;padding:0 14px;height:44px;font:inherit;font-weight:700;text-align:center;min-width:64px}
+.chok{flex:none;width:44px;height:44px;border-radius:50%;border:0;font-size:20px;font-weight:800;color:#1a1306;background:linear-gradient(135deg,#ffe08a,#b8820e);cursor:pointer}
+.chx.saved{border-color:var(--ac)}.chc{margin-top:16px}
 .hd{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;color:var(--mu);font-size:20px;font-weight:800;letter-spacing:-3px;padding:6px 10px 6px 2px;align-self:center;line-height:1}
 .ex.drag{position:relative;z-index:10;border-color:var(--ac);box-shadow:0 14px 34px rgba(0,0,0,.42)}
 .pg{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.fm{display:flex;flex-direction:column;gap:10px}.fm label{font-size:13px;color:var(--mu);display:flex;flex-direction:column;gap:4px;min-width:0}.fm .in,.pg .in{width:100%;min-width:0;box-sizing:border-box}details.cfd summary::-webkit-details-marker{display:none}.pg label{font-size:13px;color:var(--mu);display:flex;flex-direction:column;gap:4px}
@@ -155,8 +159,8 @@ summary.btn{display:flex;align-items:center;justify-content:center}
 </div>
 <script>
 const DATA={
-"Pecs":[["Développé couché barre","Le classique, base de la force"],["Développé couché haltères","Amplitude + travail de chaque bras"],["Développé incliné haltères","Haut des pecs"],["Dips pectoraux","Penché en avant"],["Écarté poulie vis-à-vis","Étirement + contraction"],["Pompes lestées","Finisher"]],
-"Triceps":[["Barre au front","Masse du triceps"],["Extension poulie corde","Isolation"],["Kickback poulie","Contraction en fin de mouvement"],["Dips banc","Poids du corps"],["Extension nuque haltère","Chef long"]],
+"Pecs":[["Développé couché barre","Le classique, base de la force"],["Développé couché haltères","Amplitude + travail de chaque bras"],["Développé incliné haltères","Haut des pecs"],["Dips pecs","Penché en avant, poids du corps"],["Dips triceps","Buste droit, poids du corps"],["Écarté poulie vis-à-vis","Étirement + contraction"],["Pompes lestées","Finisher"]],
+"Triceps":[["Barre au front","Masse du triceps"],["Extension poulie corde","Isolation"],["Kickback poulie","Contraction en fin de mouvement"],["Dips pecs","Penché en avant, poids du corps"],["Dips triceps","Buste droit, poids du corps"],["Extension nuque haltère","Chef long"]],
 "Épaules":[["Développé militaire haltères","Force globale des épaules"],["Élévations latérales","Largeur d'épaules"],["Élévations latérales poulie","Tension constante"],["Oiseau","Arrière d'épaule"],["Arnold press","Mobilité + volume"],["Face pull","Santé des épaules"]],
 "Dos":[["Tractions","Le roi du dos"],["Pull-over poulie bras tendus","Étirement et contraction du grand dorsal"],["Rowing Meadows","Épaisseur, unilatéral à la barre"],["Rowing Yates","Rowing buste redressé, haut du dos"],["Tirage unilatéral poulie","Amplitude, un bras à la fois"],["Rowing barre","Épaisseur"],["Tirage vertical","Largeur"],["Tirage bûcheron","Un bras à la fois, coude vers la hanche"],["Tirage horizontal simple","Contrôle"]],
 "Biceps":[["Curl barre EZ","Masse"],["Spider curl","Isolation, buste sur banc incliné"],["Bayesian curl poulie","Tension constante, bras en arrière"],["Curl concentré","Pic de contraction"],["Curl barre banc inversé","Isolation, buste calé sur le banc"],["Curl marteau","Brachial + avant-bras"],["Curl incliné haltères","Gros étirement"],["Curl pupitre","Isolation stricte"]],
@@ -443,7 +447,33 @@ if(!ref&&L.length>1){ref=L[0];lab="depuis la première valeur"}
 if(!ref)return"Première valeur enregistrée, la progression apparaîtra à la prochaine mise à jour.";
 const p=Math.round((la.kg-ref.kg)/ref.kg*1000)/10;
 return`<b style="color:${p>=0?"var(--ok)":"#dc2626"}">${p>=0?"+":""}${p} %</b> ${lab} (${ref.kg} → ${la.kg} kg)`}
+/* CHARGES : liste rapide */
+const BW=new Set(["Tractions","Dips pecs","Dips triceps"]),CH_ORDER=["Pecs","Triceps","Épaules","Autre","Dos","Biceps","Jambes"],RPS=[5,6,8,10,12,15,20];
+let CHLIST=[];
+const repsOf=n=>(S.reps&&S.reps[n])||(/^Développé militaire/i.test(n)?12:/^Élévations latérales/i.test(n)?15:8);
+const nf=x=>String(Math.round(x*100)/100).replace(".",",");
+const fmtE=x=>x.bw?x.reps+" rép."+(x.kg>0?" · lesté +"+nf(x.kg)+" kg":""):nf(x.kg)+" kg"+(x.reps?" × "+x.reps:"");
+function agoD(ts){const d=Math.round((new Date().setHours(0,0,0,0)-new Date(ts).setHours(0,0,0,0))/864e5);return d<=0?"aujourd'hui":d==1?"hier":"il y a "+d+" j"}
+function chLast(L){if(!L||!L.length)return"Pas encore de valeur";const la=L[L.length-1],pr=L[L.length-2];let d="";
+if(pr){const v=la.bw?la.reps-pr.reps:la.kg-pr.kg;if(v)d=" · "+(v>0?"+":"")+nf(v)+(la.bw?" rép.":" kg")}
+return fmtE(la)+" · "+agoD(la.ts)+d}
+function progBW(L){const la=L[L.length-1],f=L[0];if(L.length<2)return"Première valeur enregistrée.";const v=la.reps-f.reps;return`<b style="color:${v>=0?"var(--ok)":"#dc2626"}">${v>=0?"+":""}${v} rép.</b> depuis la première valeur (${f.reps} → ${la.reps})`}
+function chHist(n,L){const k="ch|"+n;return(OPEN[k]?`<div class="nt" style="margin-top:8px">${BW.has(n)?progBW(L):prog(L)}</div>`+L.slice().reverse().map(x=>`<div class="fr"><div class="nt">${fd(x.ts)} · ${fmtE(x)}</div><button class="sm" data-delent="${ES(k)}" data-ts="${x.ts}">🗑</button></div>`).join(""):"")}
+function chList(){
+CHLIST=[];const seen=new Set();
+let h=`<div class="sh">Suivi des charges</div><div class="ex"><input class="in" id="cfq" type="search" placeholder="🔍 Filtrer la liste" style="width:100%"><div class="nt" style="margin-top:6px">Tape ta charge, choisis les répétitions et touche ✓. Pour les tractions et les dips : tes répétitions, et le lest si tu en as un.</div></div>`;
+CH_ORDER.forEach(c=>{if(!DATA[c])return;
+const names=DATA[c].map(e=>e[0]).concat(S.custom[c]||[]).filter(n=>{if(seen.has(n)||(DIPC[n]&&DIPC[n]!=c))return false;seen.add(n);return true});
+if(!names.length)return;
+h+=`<div class="sh chc" data-c="${c}">${c}</div>`+names.map(n=>{const i=CHLIST.push(n)-1,L=S.ch[n]||[],la=L[L.length-1],bw=BW.has(n),op=OPEN["ch|"+n],r=repsOf(n);
+return`<div class="ex chx${JUSTCH==n?" saved":""}" data-n="${ES(norm(n))}" data-c="${c}"><div class="top"><div style="flex:1;min-width:0"><div class="nm">${ES(n)}</div><div class="nt">${chLast(L)}</div></div><button class="btn" data-hist="${ES("ch|"+n)}">${op?"Masquer":"Historique"}</button></div>
+<div class="chf">`+(bw?`<label>Répétitions<input class="in" id="chk_${i}" data-chin="${i}" type="number" inputmode="numeric" placeholder="${la?la.reps:""}"></label><label>Lesté (kg)<input class="in" id="chl_${i}" data-chin="${i}" type="number" inputmode="decimal" step="0.5" placeholder="${la&&la.kg>0?la.kg:"0"}"></label>`:`<label>Charge (kg)<input class="in" id="chk_${i}" data-chin="${i}" type="number" inputmode="decimal" step="0.5" placeholder="${la?la.kg:""}"></label><select class="rp" id="chr_${i}" data-rp="${i}" aria-label="Répétitions">${RPS.map(v=>`<option value="${v}"${v==r?" selected":""}>x${v}</option>`).join("")}</select>`)+`<button class="chok" data-chok="${i}" aria-label="Enregistrer">✓</button></div>${chHist(n,L)}</div>`}).join("")});
+const old=Object.keys(S.ch).filter(n=>!seen.has(n)&&!/^(Abdos|Cardio)$/.test(catOf(n)||""));
+if(old.length)h+=`<div class="sh chc" data-c="old">Anciens exercices</div>`+old.map(n=>`<div class="ex chx" data-n="${ES(norm(n))}" data-c="old"><div class="top"><div style="flex:1;min-width:0"><div class="nm">${ES(n)}</div><div class="nt">${chLast(S.ch[n])}</div></div><button class="btn" data-hist="${ES("ch|"+n)}">${OPEN["ch|"+n]?"Masquer":"Historique"}</button></div>${chHist(n,S.ch[n])}</div>`).join("");
+JUSTCH=null;return h}
+let JUSTCH=null;
 function chView(kind){
+if(kind=="ch")return chList();
 const rm=kind=="rm",st=S[kind],nm=PK[kind];
 let h=`<div class="sh">${rm?"Record 1 RM":"Suivi des charges"}</div><div class="ex"><input class="in" id="cq" data-kind="${kind}" type="search" placeholder="🔍 Cherche un exercice (ex : développé couché)" style="width:100%"><div id="cres" style="margin-top:6px"></div>`;
 if(nm){const L=st[nm]||[],la=L[L.length-1];
@@ -574,7 +604,8 @@ el.innerHTML=`<div class="food"><div class="nm">🍽️ Objectif prise de masse 
 <div class="food" style="margin-top:10px"><div class="nm">🔥 Dépense en séance</div>`+(ld?`<div class="big" style="margin-top:6px">~${burn(ld.avg)} kcal</div><div class="nt" style="margin-top:4px">Moyenne de tes ${ld.n} dernière${ld.n>1?"s":""} séance${ld.n>1?"s":""} (durée moyenne ${dur(ld.avg)})</div>`:`<div class="nt" style="margin-top:6px">Disponible dès ta première séance terminée (calculée sur tes 3 dernières).</div>`)+`</div>`}
 
 /* EVENTS */
-function catOf(n){for(const c in DATA)if(DATA[c].some(e=>e[0]==n))return c;for(const c in S.custom)if((S.custom[c]||[]).includes(n))return c;return null}
+const DIPC={"Dips pecs":"Pecs","Dips triceps":"Triceps"};
+function catOf(n){if(DIPC[n])return DIPC[n];for(const c in DATA)if(DATA[c].some(e=>e[0]==n))return c;for(const c in S.custom)if((S.custom[c]||[]).includes(n))return c;return null}
 function sGrp(v){const m={};v.forEach(s=>{const c=catOf(s.n);if(c&&c!="Autre")m[c]=(m[c]||0)+(+s.sets||0)});return m}
 function sTitle(v){const m={};v.forEach(s=>{const c=catOf(s.n);if(!c||c=="Autre")return;m[c]=m[c]||[0,0];m[c][0]++;m[c][1]+=s.sets});const k=Object.keys(m).sort((a,b)=>m[b][0]-m[a][0]||m[b][1]-m[a][1]).slice(0,3);if(!k.length)return"Muscu";const l=k.map((x,i)=>i?x.toLowerCase():x);return l.length>1?l.slice(0,-1).join(", ")+" et "+l[l.length-1]:l[0]}
 function autoLog(){
@@ -625,6 +656,10 @@ if(!(km>0)||!(sec>0)){alert("Entre une distance et une durée.");return}
 const n=Date.now();S.hist.push({id:"c"+n,type:"cardio",ty:S.cty||"course",s:n-sec*1000,e:n,dur:sec,km:Math.round(km*100)/100});S.cd=0}
 else if(D.delh){if(!confirm("Supprimer cette entrée du suivi ?"))return;S.hist=S.hist.filter(x=>x.id!=D.delh)}
 else if(D.pick){PK[D.kind]=D.pick}
+else if(D.chok!==undefined){const n=CHLIST[+D.chok],bw=BW.has(n),i=D.chok,v=parseFloat($("chk_"+i).value);
+if(bw){const lest=parseFloat(($("chl_"+i)||{}).value)||0;if(!(v>0)){alert("Note tes répétitions.");return}(S.ch[n]=S.ch[n]||[]).push({ts:Date.now(),kg:lest,reps:Math.round(v),bw:1})}
+else{const r=parseInt($("chr_"+i).value)||8;if(!(v>0)){alert("Note ta charge en kg.");return}(S.ch[n]=S.ch[n]||[]).push({ts:Date.now(),kg:v,reps:r})}
+JUSTCH=n}
 else if(t.id=="chs"){const kind=D.kind,nm=PK[kind],kg=parseFloat($("ckg").value),rp=kind=="ch"?parseInt($("crp").value):null;
 if(!nm||!(kg>0)||(kind=="ch"&&!(rp>0))){alert("Complète le poids"+(kind=="ch"?" et les répétitions":"")+".");return}
 (S[kind][nm]=S[kind][nm]||[]).push({ts:Date.now(),kg,reps:rp})}
@@ -664,11 +699,13 @@ let tot=0,dn=0;Object.values(S.sel).forEach(x=>{tot+=x.sets;dn+=x.done});
 if(tot&&dn<tot&&!confirm("Remettre toutes les séries à zéro ?"))return;
 Object.values(S.sel).forEach(x=>x.done=0);S.start=null;S.last=null;S.fs=0;if(run)$("cb").click();save();render()};
 document.addEventListener("change",async e=>{
+if(e.target.dataset&&e.target.dataset.rp!==undefined){const n=CHLIST[+e.target.dataset.rp];if(n){S.reps=S.reps||{};S.reps[n]=+e.target.value;save()}return}
 const f=e.target.files&&e.target.files[0];if(!f)return;
 if(e.target.id=="mealf"){mealScan(f);return}
 if(e.target.id=="bcf"){st("Lecture du code-barres…");try{await lookup(await readBarcode(f))}catch(err){st("Code-barres illisible. Rapproche-toi, fais une photo nette, ou tape le numéro.")}}});
 document.addEventListener("input",e=>{
 if(e.target.id=="fq"){const sel=$("fsel");sel.innerHTML=foodOpts(e.target.value);if(sel.options.length&&!sel.options[0].disabled)sel.selectedIndex=0;return}
+if(e.target.id=="cfq"){const q=norm(e.target.value.trim());document.querySelectorAll(".chx").forEach(c=>{c.style.display=!q||c.dataset.n.includes(q)?"":"none"});document.querySelectorAll(".chc").forEach(h=>{const any=[...document.querySelectorAll('.chx[data-c="'+h.dataset.c+'"]')].some(c=>c.style.display!="none");h.style.display=any?"":"none"});return}
 if(e.target.id=="cq"){$("cres").innerHTML=cres(e.target.dataset.kind,e.target.value);return}
 if(e.target.dataset&&e.target.dataset.m){const[i,f]=e.target.dataset.m.split("|");{const x=MEAL[+i];x[f]=f=="n"?e.target.value:parseFloat(e.target.value)||0;
 if(f=="g"){if(x.g0>0){x.k=Math.round(x.k0*x.g/x.g0);x.p=Math.round(x.p0*x.g/x.g0*10)/10;const lk=document.querySelector('[data-m="'+i+'|k"]'),lp=document.querySelector('[data-m="'+i+'|p"]');if(lk)lk.value=x.k;if(lp)lp.value=x.p}}
@@ -702,6 +739,7 @@ const s=Math.floor(el/1000);$("cl").textContent="Dernier : "+Math.floor(s/60)+":
 function restStart(){clearInterval(iv);run=true;t0=Date.now();$("cb").textContent="⏸ Stop";$("cb").className="go run";$("cl").textContent="Repos en cours…";show(0);iv=setInterval(()=>show(Date.now()-t0),200)}
 function restStop(){if(!run)return;run=false;clearInterval(iv);show(0);$("cb").textContent="▶ Lancer";$("cb").className="go";$("cl").textContent="Chrono arrêté"}
 
+document.addEventListener("keydown",e=>{if(e.key!="Enter"||!e.target.dataset||e.target.dataset.chin===undefined)return;const b=document.querySelector('[data-chok="'+e.target.dataset.chin+'"]');if(b)b.click()});
 /* REORDER */
 (()=>{let el=null,grab=0,py=0;
 const SP=()=>getComputedStyle(document.documentElement).getPropertyValue("--sp").trim()||"ease-out",MS=()=>matchMedia("(prefers-reduced-motion:reduce)").matches?0:340;
