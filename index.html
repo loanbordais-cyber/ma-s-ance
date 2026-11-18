@@ -450,6 +450,7 @@ return`<b style="color:${p>=0?"var(--ok)":"#dc2626"}">${p>=0?"+":""}${p} %</b> $
 /* CHARGES : liste rapide */
 const BW=new Set(["Tractions","Dips pecs","Dips triceps"]),CH_ORDER=["Pecs","Triceps","Épaules","Autre","Dos","Biceps","Jambes"],RPS=[5,6,8,10,12,15,20];
 let CHLIST=[];
+const dv=(n,f)=>{const d=S.chDraft&&S.chDraft[n];return d&&d[f]!==undefined?ES(String(d[f])):""};
 const repsOf=n=>(S.reps&&S.reps[n])||(/^Développé militaire/i.test(n)?12:/^Élévations latérales/i.test(n)?15:8);
 const nf=x=>String(Math.round(x*100)/100).replace(".",",");
 const fmtE=x=>x.bw?x.reps+" rép."+(x.kg>0?" · lesté +"+nf(x.kg)+" kg":""):nf(x.kg)+" kg"+(x.reps?" × "+x.reps:"");
@@ -467,7 +468,7 @@ const names=DATA[c].map(e=>e[0]).concat(S.custom[c]||[]).filter(n=>{if(seen.has(
 if(!names.length)return;
 h+=`<div class="sh chc" data-c="${c}">${c}</div>`+names.map(n=>{const i=CHLIST.push(n)-1,L=S.ch[n]||[],la=L[L.length-1],bw=BW.has(n),op=OPEN["ch|"+n],r=repsOf(n);
 return`<div class="ex chx${JUSTCH==n?" saved":""}" data-n="${ES(norm(n))}" data-c="${c}"><div class="top"><div style="flex:1;min-width:0"><div class="nm">${ES(n)}</div><div class="nt">${chLast(L)}</div></div><button class="btn" data-hist="${ES("ch|"+n)}">${op?"Masquer":"Historique"}</button></div>
-<div class="chf">`+(bw?`<label>Répétitions<input class="in" id="chk_${i}" data-chin="${i}" type="number" inputmode="numeric" placeholder="${la?la.reps:""}"></label><label>Lesté (kg)<input class="in" id="chl_${i}" data-chin="${i}" type="number" inputmode="decimal" step="0.5" placeholder="${la&&la.kg>0?la.kg:"0"}"></label>`:`<label>Charge (kg)<input class="in" id="chk_${i}" data-chin="${i}" type="number" inputmode="decimal" step="0.5" placeholder="${la?la.kg:""}"></label><select class="rp" id="chr_${i}" data-rp="${i}" aria-label="Répétitions">${RPS.map(v=>`<option value="${v}"${v==r?" selected":""}>x${v}</option>`).join("")}</select>`)+`<button class="chok" data-chok="${i}" aria-label="Enregistrer">✓</button></div>${chHist(n,L)}</div>`}).join("")});
+<div class="chf">`+(bw?`<label>Répétitions<input class="in" id="chk_${i}" data-chin="${i}" data-f="a" type="number" inputmode="numeric" value="${dv(n,"a")}" placeholder="${la?la.reps:""}"></label><label>Lesté (kg)<input class="in" id="chl_${i}" data-chin="${i}" data-f="b" type="number" inputmode="decimal" step="0.5" value="${dv(n,"b")}" placeholder="${la&&la.kg>0?la.kg:"0"}"></label>`:`<label>Charge (kg)<input class="in" id="chk_${i}" data-chin="${i}" data-f="a" type="number" inputmode="decimal" step="0.5" value="${dv(n,"a")}" placeholder="${la?la.kg:""}"></label><select class="rp" id="chr_${i}" data-rp="${i}" aria-label="Répétitions">${RPS.map(v=>`<option value="${v}"${v==r?" selected":""}>x${v}</option>`).join("")}</select>`)+`<button class="chok" data-chok="${i}" aria-label="Enregistrer">✓</button></div>${chHist(n,L)}</div>`}).join("")});
 const old=Object.keys(S.ch).filter(n=>!seen.has(n)&&!/^(Abdos|Cardio)$/.test(catOf(n)||""));
 if(old.length)h+=`<div class="sh chc" data-c="old">Anciens exercices</div>`+old.map(n=>`<div class="ex chx" data-n="${ES(norm(n))}" data-c="old"><div class="top"><div style="flex:1;min-width:0"><div class="nm">${ES(n)}</div><div class="nt">${chLast(S.ch[n])}</div></div><button class="btn" data-hist="${ES("ch|"+n)}">${OPEN["ch|"+n]?"Masquer":"Historique"}</button></div>${chHist(n,S.ch[n])}</div>`).join("");
 JUSTCH=null;return h}
@@ -659,7 +660,7 @@ else if(D.pick){PK[D.kind]=D.pick}
 else if(D.chok!==undefined){const n=CHLIST[+D.chok],bw=BW.has(n),i=D.chok,v=parseFloat($("chk_"+i).value);
 if(bw){const lest=parseFloat(($("chl_"+i)||{}).value)||0;if(!(v>0)){alert("Note tes répétitions.");return}(S.ch[n]=S.ch[n]||[]).push({ts:Date.now(),kg:lest,reps:Math.round(v),bw:1})}
 else{const r=parseInt($("chr_"+i).value)||8;if(!(v>0)){alert("Note ta charge en kg.");return}(S.ch[n]=S.ch[n]||[]).push({ts:Date.now(),kg:v,reps:r})}
-JUSTCH=n}
+if(S.chDraft)delete S.chDraft[n];JUSTCH=n}
 else if(t.id=="chs"){const kind=D.kind,nm=PK[kind],kg=parseFloat($("ckg").value),rp=kind=="ch"?parseInt($("crp").value):null;
 if(!nm||!(kg>0)||(kind=="ch"&&!(rp>0))){alert("Complète le poids"+(kind=="ch"?" et les répétitions":"")+".");return}
 (S[kind][nm]=S[kind][nm]||[]).push({ts:Date.now(),kg,reps:rp})}
@@ -705,6 +706,7 @@ if(e.target.id=="mealf"){mealScan(f);return}
 if(e.target.id=="bcf"){st("Lecture du code-barres…");try{await lookup(await readBarcode(f))}catch(err){st("Code-barres illisible. Rapproche-toi, fais une photo nette, ou tape le numéro.")}}});
 document.addEventListener("input",e=>{
 if(e.target.id=="fq"){const sel=$("fsel");sel.innerHTML=foodOpts(e.target.value);if(sel.options.length&&!sel.options[0].disabled)sel.selectedIndex=0;return}
+if(e.target.dataset&&e.target.dataset.chin!==undefined&&e.target.dataset.f){const n=CHLIST[+e.target.dataset.chin];if(n){S.chDraft=S.chDraft||{};(S.chDraft[n]=S.chDraft[n]||{})[e.target.dataset.f]=e.target.value;if(!e.target.value){delete S.chDraft[n][e.target.dataset.f];if(!Object.keys(S.chDraft[n]).length)delete S.chDraft[n]}save()}return}
 if(e.target.id=="cfq"){const q=norm(e.target.value.trim());document.querySelectorAll(".chx").forEach(c=>{c.style.display=!q||c.dataset.n.includes(q)?"":"none"});document.querySelectorAll(".chc").forEach(h=>{const any=[...document.querySelectorAll('.chx[data-c="'+h.dataset.c+'"]')].some(c=>c.style.display!="none");h.style.display=any?"":"none"});return}
 if(e.target.id=="cq"){$("cres").innerHTML=cres(e.target.dataset.kind,e.target.value);return}
 if(e.target.dataset&&e.target.dataset.m){const[i,f]=e.target.dataset.m.split("|");{const x=MEAL[+i];x[f]=f=="n"?e.target.value:parseFloat(e.target.value)||0;
