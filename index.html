@@ -693,22 +693,13 @@ $("etaTxt").textContent=tot+" séries prévues ("+ne+" exos) · "+rem+" restante
 let run=false,t0=0,iv;
 function show(ms){const s=Math.floor(ms/1000);const rf=$("rf");if(rf)rf.style.strokeDashoffset=119.4*(1-Math.min(1,ms/1000/300));$("ct").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
 $("cb").onclick=()=>{
-if(REST){restStop(true);return}
 if(!run){run=true;t0=Date.now();$("cb").textContent="⏸ Stop";$("cb").className="go run";$("cl").textContent="En cours…";iv=setInterval(()=>show(Date.now()-t0),200)}
 else{run=false;clearInterval(iv);const el=Date.now()-t0;show(0);$("cb").textContent="▶ Lancer";$("cb").className="go";
 const s=Math.floor(el/1000);$("cl").textContent="Dernier : "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}}};
 
-/* REPOS AUTO */
-let REST=null,rvi=null;
-function restTick(){if(!REST)return;const rem=REST.end-Date.now(),rf=$("rf");
-if(rem<=0){const m=Math.round(REST.d/6)/10;clearInterval(rvi);REST=null;if(rf)rf.style.strokeDashoffset=119.4;$("ct").textContent="0:00";$("cl").textContent="Repos terminé : série suivante";$("cb").textContent="▶ Lancer";$("cb").className="go";try{navigator.vibrate&&navigator.vibrate([120,80,120])}catch(e){}return}
-const s=Math.ceil(rem/1000);if(rf)rf.style.strokeDashoffset=119.4*(1-rem/(REST.d*1000));$("ct").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
-function restStart(n){const d=HV.test(n)?(S.paceH||210):(S.paceL||90);
-if(run){run=false;clearInterval(iv)}
-REST={end:Date.now()+d*1000,d};clearInterval(rvi);rvi=setInterval(restTick,250);
-$("cl").textContent="Repos en cours…";$("cb").textContent="⏭ Passer";$("cb").className="go run";restTick()}
-function restStop(reset){if(!REST&&!reset)return;clearInterval(rvi);REST=null;const rf=$("rf");if(rf)rf.style.strokeDashoffset=119.4;$("ct").textContent="0:00";$("cl").textContent="Repos : appuie pour lancer";$("cb").textContent="▶ Lancer";$("cb").className="go"}
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)restTick()});
+/* CHRONO AUTO (repos) : demarre a chaque serie cochee, compte vers le haut */
+function restStart(){clearInterval(iv);run=true;t0=Date.now();$("cb").textContent="⏸ Stop";$("cb").className="go run";$("cl").textContent="Repos en cours…";show(0);iv=setInterval(()=>show(Date.now()-t0),200)}
+function restStop(){if(!run)return;run=false;clearInterval(iv);show(0);$("cb").textContent="▶ Lancer";$("cb").className="go";$("cl").textContent="Chrono arrêté"}
 
 /* REORDER */
 (()=>{let el=null,grab=0,py=0;
