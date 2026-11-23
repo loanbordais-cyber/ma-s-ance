@@ -134,6 +134,9 @@ h1,.big,.est b,.rk{letter-spacing:-.022em}
 .nutt .food,[data-skin="alcide"] .nutt .food{padding:14px;min-width:0}
 .tl{font-size:13px;font-weight:600;color:var(--mu);margin-bottom:2px}
 .nutt .big,[data-skin="alcide"] .nutt .big.gold{font-size:32px;line-height:1.1}
+.ntabs{display:flex;gap:6px;margin-bottom:10px}.ntabs button{flex:1 1 0;min-width:0;padding:10px 4px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--mu);font-size:14px;font-weight:600}.ntabs button.on{color:#1a1200;border-color:transparent;background:linear-gradient(135deg,#ffe08a,#b8820e)}
+.fres{display:flex;flex-direction:column;gap:6px;margin-top:10px;max-height:300px;overflow:auto}.fcd{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--bd);background:transparent;color:var(--tx)}.fcd.on{border-color:var(--ac)}.fcd .nt{margin:0}
+.fpan{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}.lnk{background:none;border:0;color:var(--mu);font-size:12px;margin-top:8px;padding:4px 0;text-decoration:underline}
 .nsec{display:flex;gap:8px;margin-top:8px}.nsec .btn{flex:1 1 0;min-width:0;padding:8px 4px;font-size:13px;color:var(--mu)}
 .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;pointer-events:none}
 .sm .ic{color:var(--mu)}
@@ -498,6 +501,14 @@ function allFoodsList(){return S.foods.map(f=>[f.n,f.c,f.p,f.k,f.g])}
 function foodOpts(q){const n=norm(q.trim());let o="";
 allFoodsList().forEach((f,i)=>{if(!n||norm(f[0]).includes(n)||norm(f[1]).includes(n))o+=`<option value="${i}">${ES(f[0])} — ${f[4]} g ≈ ${Math.round(f[2]*f[4]/10)/10} g prot., ${Math.round(f[3]*f[4]/100)} kcal</option>`});
 return o||'<option value="" disabled selected>Aucun résultat</option>'}
+let FSEL=-1,FQ="";
+function fRes(){const n=norm(FQ.trim());let h="",c=0;
+allFoodsList().forEach((f,i)=>{if(c>=40)return;if(!n||norm(f[0]).includes(n)||norm(f[1]).includes(n)){c++;h+=`<button class="fcd${i==FSEL?" on":""}" data-fp="${i}"><span class="nm">${ES(f[0])}</span><span class="nt">${f[4]} g · ${Math.round(f[3]*f[4]/100)} kcal · ${Math.round(f[2]*f[4]/10)/10} g prot.</span></button>`}});
+return h||'<div class="nt" style="padding:8px 2px">Aucun résultat. Tu peux le créer dans l\'onglet « Créer ».</div>'}
+function fPan(isT){const f=FSEL>=0?allFoodsList()[FSEL]:null;if(!f)return"";
+return`<div class="fpan"><div class="fr" style="border:0;padding:0 0 8px"><div style="min-width:0"><div class="nm">${ES(f[0])}</div><div class="nt">pour 100 g : ${f[3]} kcal · ${f[2]} g prot.</div></div><div style="display:flex;gap:6px;flex:none"><button class="sm" id="fed" aria-label="Modifier l'aliment">${IC.ed}</button><button class="sm" id="fdel" aria-label="Supprimer l'aliment">${IC.del}</button></div></div>
+<label class="nt" for="fg">Quantité mangée (g)</label><div style="display:flex;gap:8px;margin-top:4px"><input class="in" id="fg" type="number" inputmode="numeric" placeholder="${f[4]}" value=""><button class="btn p" id="fadd">Ajouter</button></div>
+${isT?`<button class="lnk" id="fyes">↩ Compter sur hier</button>`:""}</div>`}
 let JUST="";let SC=null,SCST="",SL=false,RD=null,MEAL=null,MST="";
 function mealUI(){if(!MST&&!MEAL)return"";let h=`<div class="sh">Estimation du plat</div><div class="food"><div class="nt" id="mst">${ES(MST)}</div>`;
 if(MEAL){h+=MEAL.map((x,i)=>`<div class="pg" style="margin-top:8px"><label>Aliment<input class="in" data-m="${i}|n" value="${ES(x.n)}"></label><label>Quantité (g)<input class="in" type="number" inputmode="decimal" data-m="${i}|g" value="${x.g}"></label><label>Calories (kcal)<input class="in" type="number" inputmode="decimal" data-m="${i}|k" value="${x.k}"></label><label>Protéines (g)<input class="in" type="number" inputmode="decimal" data-m="${i}|p" value="${x.p}"></label><button class="sm" data-mdel="${i}" aria-label="Retirer">${IC.del}</button></div>`).join("")+`<div class="dots"><button class="btn p" id="madd">Ajouter au journal</button><button class="btn" id="mcx">Annuler</button></div>`}
@@ -573,22 +584,16 @@ ${target?`<div class="nt">sur ${target} g</div><div class="bar"><i style="width:
 <div class="food"><div class="tl">Calories</div><div class="big gold">${Math.round(totalK)}<span style="font-size:15px;color:var(--mu);font-weight:500"> kcal</span></div>
 ${cg?`<div class="nt">sur ~${Math.round(cg.goal)} kcal</div><div class="bar"><i style="width:${kpct}%"></i></div><div class="nt" style="margin-top:6px">${totalK>=cg.hi?"Au-dessus de l'objectif":totalK>=cg.goal?"Objectif atteint":"Reste ~"+Math.max(0,Math.round(cg.goal-totalK))+" kcal"}</div><div class="nt" style="margin-top:2px">Fourchette ${Math.round(cg.lo)}–${Math.round(cg.hi)}</div>`:`<div class="nt">Renseigne ton poids et ta taille dans Réglages › Profil pour voir ton objectif.</div>`}</div></div>`;
 hh+=scanUI()+mealUI();
-hh+=`<div class="sh">Ajouter un aliment</div><div class="food">
-<input class="in" id="fq" type="search" placeholder="Rechercher un aliment (ex : thon, riz…)" style="width:100%;margin-bottom:8px"><select class="in" id="fsel" style="width:100%">${foodOpts("")}</select><div style="display:flex;gap:8px;margin-top:8px"><input class="in" id="fg" type="number" inputmode="numeric" placeholder="Quantité en grammes" value=""><button class="btn p" id="fadd">Ajouter</button></div>
-${isT?`<button class="btn" id="fyes" style="margin-top:8px;width:100%">↩ Compter ce repas sur hier</button>`:""}
-<details class="cfd"><summary class="btn" style="margin-top:8px;width:100%;text-align:center;list-style:none">Créer un aliment</summary>
-<div class="fm" style="margin-top:10px">
-<label>Nom<input class="in" id="cfn" placeholder="ex : Skyr nature"></label>
-<label>Protéines (g pour 100 g)<input class="in" id="cfp" type="number" inputmode="decimal"></label>
-<label>Calories (kcal pour 100 g)<input class="in" id="cfk" type="number" inputmode="decimal"></label>
-<label>Portion habituelle (g)<input class="in" id="cfg" type="number" inputmode="numeric" placeholder="100"></label>
-<button class="btn p" id="cfadd">Créer l'aliment</button></div></details>
-<div class="nsec"><button class="btn" id="fed">Modifier l'aliment</button><button class="btn" id="fdel">Supprimer l'aliment</button></div>
-</div>`;
+const nt=S.nutTab||"l",hr=new Date().getHours(),qn=hr<15?"Repas du midi":hr>=18?"Repas du soir":"Repas";
+hh+=`<div class="sh">Ajouter</div><div class="ntabs">${[["l","Ma liste"],["q","Repas rapide"],["c","Créer"]].map(t=>`<button data-nt="${t[0]}" class="${nt==t[0]?"on":""}">${t[1]}</button>`).join("")}</div><div class="food">`;
+if(nt=="l")hh+=`<input class="in" id="fq" type="search" placeholder="Rechercher un aliment (ex : thon, riz…)" value="${ES(FQ)}" style="width:100%"><div id="fres" class="fres">${fRes()}</div><div id="fpanw">${fPan(isT)}</div>`;
+else if(nt=="q")hh+=`<div class="fm"><label>Nom<input class="in" id="qn" value="${qn}"></label><label>Calories (kcal)<input class="in" id="qk" type="number" inputmode="decimal"></label><label>Protéines (g)<input class="in" id="qp" type="number" inputmode="decimal"></label><button class="btn p" id="qadd">Ajouter ce repas</button></div><div class="nt" style="margin-top:8px">Ajouté directement au journal, sans créer d'aliment.</div>`;
+else hh+=`<div class="fm"><label>Nom<input class="in" id="cfn" placeholder="ex : Skyr nature"></label><label>Protéines (g pour 100 g)<input class="in" id="cfp" type="number" inputmode="decimal"></label><label>Calories (kcal pour 100 g)<input class="in" id="cfk" type="number" inputmode="decimal"></label><label>Portion habituelle (g)<input class="in" id="cfg" type="number" inputmode="numeric" placeholder="100"></label><button class="btn p" id="cfadd" style="padding:14px;font-size:16px">Créer l'aliment</button></div>`;
+hh+=`</div>`;
 hh+=`<div class="sh">Mangé (${day.length})</div>`;
 if(!day.length)hh+=`<div class="nt">Rien d'ajouté pour l'instant.</div>`;
-if(day.length)hh+=`<div class="food">`+day.map((x,i)=>`<div class="fr${grew&&i==day.length-1?" new":""}"><div style="min-width:0"><div class="nm">${ES(x.n)}</div><div class="nt">${x.g} g · ~${Math.round(x.p)} g prot. · ~${Math.round(x.k||0)} kcal</div></div><div style="display:flex;gap:6px;flex:none"><button class="sm" data-edjr="${i}" aria-label="Modifier la quantité">${IC.ed}</button><button class="sm" data-deljr="${i}" aria-label="Supprimer">${IC.del}</button></div></div>`).join("")+`</div>`;
-hh+=`<div class="sh">7 derniers jours</div>`+[0,1,2,3,4,5,6].map(o=>{const k=dayOff(-o),t=dayTot(k);return`<button class="cat" style="padding:12px 14px;font-size:15px;${k==ck?"border-color:var(--ac)":""}" data-nd="${o?k:""}"><div style="text-transform:capitalize">${o<2?dayLabel(k):new Date(k+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}</div><div class="nt" style="margin:0;flex:none">${Math.round(t.p)} g prot. · ${Math.round(t.k)} kcal</div></button>`}).join("");
+if(day.length)hh+=`<div class="food">`+day.map((x,i)=>`<div class="fr${grew&&i==day.length-1?" new":""}"><div style="min-width:0"><div class="nm">${ES(x.n)}</div><div class="nt">${x.q?"":x.g+" g · "}~${Math.round(x.p)} g prot. · ~${Math.round(x.k||0)} kcal</div></div><div style="display:flex;gap:6px;flex:none"><button class="sm" data-edjr="${i}" aria-label="Modifier la quantité">${IC.ed}</button><button class="sm" data-deljr="${i}" aria-label="Supprimer">${IC.del}</button></div></div>`).join("")+`</div>`;
+hh+=`<div class="sh">3 derniers jours</div>`+[0,1,2].map(o=>{const k=dayOff(-o),t=dayTot(k);return`<button class="cat" style="padding:12px 14px;font-size:15px;${k==ck?"border-color:var(--ac)":""}" data-nd="${o?k:""}"><div style="text-transform:capitalize">${o<2?dayLabel(k):new Date(k+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}</div><div class="nt" style="margin:0;flex:none">${Math.round(t.p)} g prot. · ${Math.round(t.k)} kcal</div></button>`}).join("");
 return hh}
 function profRes(){
 const el=$("pr");if(!el)return;
@@ -669,7 +674,10 @@ else if(D.delent){const[kind,...r]=D.delent.split("|"),nm=r.join("|");if(!confir
 S[kind][nm]=S[kind][nm].filter(x=>x.ts!=+D.ts);if(!S[kind][nm].length)delete S[kind][nm]}
 else if(D.dn){const d=new Date(curKey()+"T12:00:00");d.setDate(d.getDate()+ +D.dn);const nk=keyD(d);S.nd=nk>=todayKey()?null:nk}
 else if(D.nd!==undefined){S.nd=D.nd||null;scrollTo(0,0)}
-else if(t.id=="fadd"||t.id=="fyes"){const sv=$("fsel").value;if(sv==="")return;const f=allFoodsList()[+sv],g=parseFloat($("fg").value)||f[4];
+else if(D.nt){S.nutTab=D.nt}
+else if(D.fp!==undefined){FSEL=FSEL==+D.fp?-1:+D.fp;$("fres").innerHTML=fRes();$("fpanw").innerHTML=fPan(curKey()==todayKey());return}
+else if(t.id=="qadd"){const n=$("qn").value.trim()||"Repas",k=parseFloat($("qk").value),p=parseFloat($("qp").value)||0;if(!(k>=0))return;pushJ(curKey(),{n,g:0,q:1,p,k})}
+else if(t.id=="fadd"||t.id=="fyes"){if(FSEL<0)return;const f=allFoodsList()[FSEL],g=parseFloat($("fg").value)||f[4];
 pushJ(t.id=="fyes"?dayOff(-1):curKey(),{n:f[0],g,p:f[2]*g/100,k:f[3]*g/100})}
 else if(D.deljr!==undefined){S.journal[curKey()].splice(+D.deljr,1)}
 else if(t.id=="cfadd"){const n=$("cfn").value.trim(),p=parseFloat($("cfp").value),k=parseFloat($("cfk").value)||0,g=parseFloat($("cfg").value)||100;
@@ -681,9 +689,10 @@ if(!(pp>=0)||!(kk>=0)||!(g>0)){st("Complète les protéines, les calories et la 
 if(t.id=="ssave")S.foods.push({n,c:"Perso",p:pp,k:kk,g});
 pushJ(curKey(),{n,g,p:pp*g/100,k:kk*g/100});SC=null;SCST=""}
 else if(t.id=="scx"){SC=null;SCST=""}
+else if(D.edjr!==undefined&&S.journal[curKey()][+D.edjr].q){const x=S.journal[curKey()][+D.edjr];const k=parseFloat(prompt("Calories (kcal) :",Math.round(x.k||0)));if(k>=0)x.k=k;const pp=parseFloat(prompt("Protéines (g) :",Math.round(x.p)));if(pp>=0)x.p=pp}
 else if(D.edjr!==undefined){const x=S.journal[curKey()][+D.edjr];const v=parseFloat(prompt("Nouvelle quantité en grammes :",x.g));if(!(v>0))return;const r=v/x.g;x.p=x.p*r;x.k=(x.k||0)*r;x.g=v}
 else if(t.id=="fed"){
-if($("fsel").value==="")return;const f=S.foods[+$("fsel").value];
+if(FSEL<0)return;const f=S.foods[FSEL];
 const n=prompt("Nom :",f.n);if(n===null)return;
 const g=parseFloat(prompt("Portion habituelle (g) :",f.g));
 if(n.trim())f.n=n.trim();if(g>0)f.g=g;
@@ -691,7 +700,7 @@ const pp=parseFloat(prompt("Protéines pour cette portion de "+f.g+" g (en g) :"
 if(pp>=0)f.p=Math.round(pp/f.g*1000)/10;
 const kk=parseFloat(prompt("Calories pour cette portion de "+f.g+" g (en kcal) :",Math.round(f.k*f.g/100)));
 if(kk>=0)f.k=Math.round(kk/f.g*1000)/10}
-else if(t.id=="fdel"){if($("fsel").value==="")return;if(!confirm("Supprimer cet aliment de la liste ?"))return;S.foods.splice(+$("fsel").value,1)}
+else if(t.id=="fdel"){if(FSEL<0)return;if(!confirm("Supprimer cet aliment de la liste ?"))return;S.foods.splice(FSEL,1);FSEL=-1}
 else return;
 save();render()});
 $("rst").onclick=()=>{
@@ -705,7 +714,7 @@ const f=e.target.files&&e.target.files[0];if(!f)return;
 if(e.target.id=="mealf"){mealScan(f);return}
 if(e.target.id=="bcf"){st("Lecture du code-barres…");try{await lookup(await readBarcode(f))}catch(err){st("Code-barres illisible. Rapproche-toi, fais une photo nette, ou tape le numéro.")}}});
 document.addEventListener("input",e=>{
-if(e.target.id=="fq"){const sel=$("fsel");sel.innerHTML=foodOpts(e.target.value);if(sel.options.length&&!sel.options[0].disabled)sel.selectedIndex=0;return}
+if(e.target.id=="fq"){FQ=e.target.value;FSEL=-1;$("fres").innerHTML=fRes();$("fpanw").innerHTML="";return}
 if(e.target.dataset&&e.target.dataset.chin!==undefined&&e.target.dataset.f){const n=CHLIST[+e.target.dataset.chin];if(n){S.chDraft=S.chDraft||{};(S.chDraft[n]=S.chDraft[n]||{})[e.target.dataset.f]=e.target.value;if(!e.target.value){delete S.chDraft[n][e.target.dataset.f];if(!Object.keys(S.chDraft[n]).length)delete S.chDraft[n]}save()}return}
 if(e.target.id=="cfq"){const q=norm(e.target.value.trim());document.querySelectorAll(".chx").forEach(c=>{c.style.display=!q||c.dataset.n.includes(q)?"":"none"});document.querySelectorAll(".chc").forEach(h=>{const any=[...document.querySelectorAll('.chx[data-c="'+h.dataset.c+'"]')].some(c=>c.style.display!="none");h.style.display=any?"":"none"});return}
 if(e.target.id=="cq"){$("cres").innerHTML=cres(e.target.dataset.kind,e.target.value);return}
